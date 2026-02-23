@@ -141,7 +141,7 @@ class home_activity : Fragment() {
                     .toRequestBody("text/plain".toMediaTypeOrNull())
 
                 val response =
-                    CloudinaryClient.api.mediaUpload(body, preset)
+                    CloudinaryClient.api.uploadPdf(body, preset)
 
                 val pdfUrl = response.secureUrl
                 val pdfName = customeName

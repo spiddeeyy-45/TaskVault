@@ -748,7 +748,7 @@ class study_activity : Fragment() {
                 val filePart = uriToMultipart(imageUri)
                 val preset = "TaskVaultSession".toRequestBody("text/plain".toMediaType())
 
-                val response = CloudinaryClient.api.mediaUpload(filePart, preset)
+                val response = CloudinaryClient.api.uploadImage(filePart, preset)
 
                 // Save to Firestore
                 saveSessionToFirestore(

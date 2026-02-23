@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import Adapters.MessageAdapter
 import DataClass.MessageModel
+import DataClass.NotificationRequest
+import FCM.NotificationRetrofitClient
 import com.example.taskvault.R
 import com.example.taskvault.databinding.ChatroomActivityBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -24,6 +26,8 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -62,6 +66,11 @@ class chatroom_activity : Fragment() {
         chatId = arguments?.getString("chatId") ?: ""
         friendUid = arguments?.getString("friendUid") ?: ""
         currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+        if (chatId.isEmpty() && friendUid.isNotEmpty()) {
+            chatId = listOf(currentUid, friendUid)
+                .sorted()
+                .joinToString("_")
+        }
     }
 
     override fun onCreateView(
@@ -105,7 +114,7 @@ class chatroom_activity : Fragment() {
                     "TaskVaultChat".toRequestBody("text/plain".toMediaType())
 
                 val response =
-                    CloudinaryClient.api.mediaUpload(filePart, preset)
+                    CloudinaryClient.api.uploadImage(filePart, preset)
 
                 val imageUrl = response.secureUrl
                 sendImageMessage(imageUrl)
@@ -115,6 +124,7 @@ class chatroom_activity : Fragment() {
             }
         }
     }
+
     private fun uriToMultipart(uri: Uri): MultipartBody.Part {
 
         val inputStream =
@@ -135,6 +145,7 @@ class chatroom_activity : Fragment() {
             file.asRequestBody("image/*".toMediaTypeOrNull())
         )
     }
+
     private fun setupRecycler() {
 
         adapter = MessageAdapter(messageList, currentUid)
@@ -235,18 +246,26 @@ class chatroom_activity : Fragment() {
             )
 
             val chatRef = firestore.collection("Chats").document(chatId)
-            chatRef.collection("Messages").add(message)
-            chatRef.update(
-                mapOf(
-                    "lastMessage" to text,
-                    "lastTimestamp" to System.currentTimeMillis(),
-                    "unreadCount.$friendUid" to FieldValue.increment(1)
-                )
-            )
+
+            chatRef.collection("Messages")
+                .add(message)
+                .addOnSuccessListener {
+
+                    chatRef.update(
+                        mapOf(
+                            "lastMessage" to text,
+                            "lastTimestamp" to System.currentTimeMillis(),
+                            "unreadCount.$friendUid" to FieldValue.increment(1)
+                        )
+                    )
+                    sendMessageNotification(friendUid, text)
+
+                }
 
             binding.etMessage.setText("")
         }
     }
+
     private fun sendImageMessage(imageUrl: String) {
 
         val message = MessageModel(
@@ -261,122 +280,171 @@ class chatroom_activity : Fragment() {
             .document(chatId)
             .collection("Messages")
             .add(message)
+            .addOnSuccessListener {
 
-        firestore.collection("Chats")
-            .document(chatId)
-            .update(
-                mapOf(
-                    "lastMessage" to "Image",
-                    "lastTimestamp" to System.currentTimeMillis(),
-                    "unreadCount.$friendUid" to FieldValue.increment(1)
-                )
-            )
+                firestore.collection("Chats")
+                    .document(chatId)
+                    .update(
+                        mapOf(
+                            "lastMessage" to "Image",
+                            "lastTimestamp" to System.currentTimeMillis(),
+                            "unreadCount.$friendUid" to FieldValue.increment(1)
+                        )
+                    )
+
+                // 🔥 CALL NOTIFICATION HERE
+                sendMessageNotification(friendUid, "Sent you an image")
+            }
+    }
+    private fun sendMessageNotification(receiverUid: String, messageText: String) {
+        val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        FirebaseFirestore.getInstance()
+            .collection("User")
+            .document(currentUid)
+            .get()
+            .addOnSuccessListener { senderDoc ->
+
+                val senderName = senderDoc.getString("fullName") ?: "New Message"
+
+                FirebaseFirestore.getInstance()
+                    .collection("User")
+                    .document(receiverUid)
+                    .get()
+                    .addOnSuccessListener { doc ->
+
+                        val token = doc.getString("fcmToken")
+                            ?: return@addOnSuccessListener
+
+                        val request = NotificationRequest(
+                            token = token,
+                            title = senderName,
+                            body = messageText,
+                            type = "message",
+                            senderUid = currentUid
+                        )
+
+                        CoroutineScope(Dispatchers.IO).launch {
+                            try {
+                                NotificationRetrofitClient
+                                    .api
+                                    .sendNotification(request)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+            }
     }
     private fun setupBackButton() {
-        binding.btnBack.setOnClickListener {
-            parentFragmentManager.popBackStack()
+            binding.btnBack.setOnClickListener {
+                parentFragmentManager.popBackStack()
+            }
         }
-    }
 
-    // -------------------
-    // Reset Unread Count
-    // -------------------
+        // -------------------
+        // Reset Unread Count
+        // -------------------
 
-    private fun resetUnread() {
+        private fun resetUnread() {
 
-        firestore.collection("Chats")
-            .document(chatId)
-            .update("unreadCount.$currentUid", 0)
-    }
-    private fun listenFriendStatus() {
+            firestore.collection("Chats")
+                .document(chatId)
+                .update("unreadCount.$currentUid", 0)
+        }
 
-        val database = FirebaseDatabase.getInstance()
-        statusRef = database.getReference("status/$friendUid")
+        private fun listenFriendStatus() {
 
-        statusListener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
+            val database = FirebaseDatabase.getInstance()
+            statusRef = database.getReference("status/$friendUid")
 
-                val state = snapshot.child("state")
-                    .getValue(String::class.java) ?: "offline"
+            statusListener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
 
-                if (state == "online") {
-                    binding.onlineDot.visibility = View.VISIBLE
-                    binding.tvStatus.text = "Online"
-                } else {
+                    val state = snapshot.child("state")
+                        .getValue(String::class.java) ?: "offline"
 
-                    binding.onlineDot.visibility = View.INVISIBLE
-
-                    val lastSeen = snapshot.child("lastChanged")
-                        .getValue(Long::class.java)
-
-                    if (lastSeen != null) {
-                        binding.tvStatus.text =
-                            "Last seen ${formatLastSeen(lastSeen)}"
+                    if (state == "online") {
+                        binding.onlineDot.visibility = View.VISIBLE
+                        binding.tvStatus.text = "Online"
                     } else {
-                        binding.tvStatus.text = "Offline"
+
+                        binding.onlineDot.visibility = View.INVISIBLE
+
+                        val lastSeen = snapshot.child("lastChanged")
+                            .getValue(Long::class.java)
+
+                        if (lastSeen != null) {
+                            binding.tvStatus.text =
+                                "Last seen ${formatLastSeen(lastSeen)}"
+                        } else {
+                            binding.tvStatus.text = "Offline"
+                        }
                     }
                 }
+
+                override fun onCancelled(error: DatabaseError) {}
             }
 
-            override fun onCancelled(error: DatabaseError) {}
+            statusRef.addValueEventListener(statusListener!!)
         }
 
-        statusRef.addValueEventListener(statusListener!!)
-    }
-    private fun formatLastSeen(timestamp: Long): String {
+        private fun formatLastSeen(timestamp: Long): String {
 
-        val sdf = java.text.SimpleDateFormat("hh:mm a", java.util.Locale.getDefault())
-        return sdf.format(java.util.Date(timestamp))
-    }
-
-    // ------------
-    // Emoji Button
-    // ------------
-
-    private fun showKeyboard() {
-        val imm = requireContext()
-        .getSystemService(android.content.Context.INPUT_METHOD_SERVICE)
-            as android.view.inputmethod.InputMethodManager
-
-        if (imm.isActive(binding.etMessage)) {
-            imm.hideSoftInputFromWindow(binding.etMessage.windowToken, 0)
-        } else {
-            binding.etMessage.requestFocus()
-            imm.showSoftInput(binding.etMessage, 0)
+            val sdf = java.text.SimpleDateFormat("hh:mm a", java.util.Locale.getDefault())
+            return sdf.format(java.util.Date(timestamp))
         }
-    }
-    private fun setupEmojiButton() {
 
-        binding.btnEmoji.setOnClickListener {
-            showKeyboard()
-        }
-    }
-    private fun loadMyProfile() {
+        // ------------
+        // Emoji Button
+        // ------------
 
-        firestore.collection("User")
-            .document(currentUid)
-            .collection("ProfileImage")
-            .document("Image")
-            .get()
-            .addOnSuccessListener { imageDoc ->
+        private fun showKeyboard() {
+            val imm = requireContext()
+                .getSystemService(android.content.Context.INPUT_METHOD_SERVICE)
+                    as android.view.inputmethod.InputMethodManager
 
-                myProfileUrl =
-                    imageDoc.getString("profileImageUrl")
-
-                adapter.updateMyImage(myProfileUrl)
+            if (imm.isActive(binding.etMessage)) {
+                imm.hideSoftInputFromWindow(binding.etMessage.windowToken, 0)
+            } else {
+                binding.etMessage.requestFocus()
+                imm.showSoftInput(binding.etMessage, 0)
             }
-    }
+        }
 
-    // -------------------------
-    // Remove Firestore Listener
-    // -------------------------
+        private fun setupEmojiButton() {
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        messageListener?.remove()
+            binding.btnEmoji.setOnClickListener {
+                showKeyboard()
+            }
+        }
 
-        statusListener?.let {
-            statusRef.removeEventListener(it)
+        private fun loadMyProfile() {
+
+            firestore.collection("User")
+                .document(currentUid)
+                .collection("ProfileImage")
+                .document("Image")
+                .get()
+                .addOnSuccessListener { imageDoc ->
+
+                    myProfileUrl =
+                        imageDoc.getString("profileImageUrl")
+
+                    adapter.updateMyImage(myProfileUrl)
+                }
+        }
+
+        // -------------------------
+        // Remove Firestore Listener
+        // -------------------------
+
+        override fun onDestroyView() {
+            super.onDestroyView()
+            messageListener?.remove()
+
+            statusListener?.let {
+                statusRef.removeEventListener(it)
+            }
         }
     }
-}

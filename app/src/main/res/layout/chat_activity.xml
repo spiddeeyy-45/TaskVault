@@ -75,6 +75,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text=""
+                    android:visibility="gone"
                     android:textColor="#1A0E05"
                     android:textSize="11sp"
                     android:fontFamily="sans-serif-medium"

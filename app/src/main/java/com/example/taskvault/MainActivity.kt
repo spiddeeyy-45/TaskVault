@@ -1,5 +1,6 @@
 package com.example.taskvault
 
+import ChatLogic.chatroom_activity
 import Fragments.study_activity
 import LoginHandler.Login
 import UI.home_activity
@@ -42,8 +43,13 @@ class MainActivity : AppCompatActivity() {
 
         // Load Home fragment only once
         if (savedInstanceState == null) {
-            loadFragment(home_activity())
-            setSelectedTab(Tab.HOME)
+
+            if (intent?.getBooleanExtra("openChat", false) == true) {
+                handleNotificationIntent(intent)
+            } else {
+                loadFragment(home_activity())
+                setSelectedTab(Tab.HOME)
+            }
         }
         setupPresence()
 
@@ -130,6 +136,32 @@ class MainActivity : AppCompatActivity() {
 
     enum class Tab {
         HOME, MONITOR, SETTING
+    }
+    private fun handleNotificationIntent(intent: Intent?) {
+
+        if (intent?.getBooleanExtra("openChat", false) == true) {
+
+            val senderUid = intent.getStringExtra("senderUid")
+
+            if (senderUid != null) {
+
+                val fragment = chatroom_activity().apply {
+                    arguments = Bundle().apply {
+                        putString("friendUid", senderUid)
+                    }
+                }
+
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.FragmentContainer, fragment)
+                    .commit()
+                intent.removeExtra("openChat")
+            }
+        }
+    }
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleNotificationIntent(intent)
     }
     override fun onDestroy() {
         super.onDestroy()

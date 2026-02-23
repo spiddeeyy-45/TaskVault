@@ -53,32 +53,44 @@ class search_activity : Fragment() {
         binding.recyclerSearchResults.adapter = adapter
     }
 
-    private fun sendFriendRequestNotification(targetuid: String) {
-        val myName = FirebaseAuth.getInstance().currentUser?.displayName ?: "Someone"
+    private fun sendFriendRequestNotification(targetUid: String) {
+
+        val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        //   sender name from Firestore
         firestore.collection("User")
-            .document(targetuid)
+            .document(currentUid)
             .get()
-            .addOnSuccessListener { doc ->
+            .addOnSuccessListener { senderDoc ->
 
-                val token = doc.getString("fcmToken") ?: return@addOnSuccessListener
+                val myName = senderDoc.getString("fullName") ?: "Someone"
 
-                lifecycleScope.launch {
+                //  receiver token
+                firestore.collection("User")
+                    .document(targetUid)
+                    .get()
+                    .addOnSuccessListener { doc ->
 
-                    try {
-                        NotificationRetrofitClient.api.sendNotification(
+                        val token = doc.getString("fcmToken")
+                            ?: return@addOnSuccessListener
 
-                            NotificationRequest(
-                                token = token,
-                                title = "New Friend Request",
-                                body = "$myName sent you a friend request"
-                            )
-                        )
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+                        lifecycleScope.launch {
+                            try {
+                                NotificationRetrofitClient.api.sendNotification(
+                                    NotificationRequest(
+                                        token = token,
+                                        title = "New Friend Request",
+                                        body = "$myName sent you a friend request",
+                                        type = "friend_request",
+                                        senderUid = currentUid
+                                    )
+                                )
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
                     }
-                }
             }
-
     }
 
     // ==========================

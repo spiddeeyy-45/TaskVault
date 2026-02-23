@@ -2,10 +2,13 @@ package FCM
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.example.taskvault.MainActivity
 import com.example.taskvault.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -33,6 +36,8 @@ class MyFirebaseService : FirebaseMessagingService() {
         val body = remoteMessage.notification?.body ?: ""
 
         val channelId = "taskvault_channel"
+        val type = remoteMessage.data["type"]
+        val senderUid = remoteMessage.data["senderUid"]
 
         //  notification channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -44,6 +49,30 @@ class MyFirebaseService : FirebaseMessagingService() {
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)
         }
+        // ==============================
+        //  Intent Based On Type
+        // ==============================
+        val intent = if (type == "message" && senderUid != null) {
+
+            Intent(this, MainActivity::class.java).apply {
+                putExtra("openChat", true)
+                putExtra("senderUid", senderUid)
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+
+        } else {
+
+            Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            System.currentTimeMillis().toInt(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 
         //  Build notification
         val notification = NotificationCompat.Builder(this, channelId)
@@ -51,6 +80,8 @@ class MyFirebaseService : FirebaseMessagingService() {
             .setContentTitle(title)
             .setContentText(body)
             .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
             .build()
 
         //  Permission check

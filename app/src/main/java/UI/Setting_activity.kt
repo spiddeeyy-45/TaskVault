@@ -219,7 +219,7 @@ class setting_activity : Fragment() {
                 val preset =
                     "TaskVaultProfile".toRequestBody("text/plain".toMediaType())
 
-                val response = CloudinaryClient.api.mediaUpload(filePart, preset)
+                val response = CloudinaryClient.api.uploadImage(filePart, preset)
 
                 // Save image URL in Profile collection
                 db.collection("User")
@@ -293,10 +293,17 @@ class setting_activity : Fragment() {
         val pdfList = mutableListOf<PdfModel>()
 
         val adapter = PdfAdapter(pdfList) { pdf ->
+            val cleanUrl = pdf.url
+                .trim()
+                .removePrefix("\"")
+                .removeSuffix("\"")
 
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.setDataAndType(Uri.parse(pdf.url), "application/pdf")
-            intent.flags = Intent.FLAG_ACTIVITY_NO_HISTORY
+            Log.d("PDF_OPEN_URL", cleanUrl)
+
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse(cleanUrl)
+                flags = Intent.FLAG_ACTIVITY_NO_HISTORY
+            }
 
             try {
                 startActivity(intent)
@@ -374,31 +381,40 @@ class setting_activity : Fragment() {
 
         dialog.show()
     }
-    private fun uploadPdfToCloudinary(uri: Uri,customeName:String) {
+    private fun uploadPdfToCloudinary(uri: Uri, customName: String) {
 
         lifecycleScope.launch {
 
             try {
 
-                val inputStream =
-                    requireContext().contentResolver.openInputStream(uri)
+                val contentResolver = requireContext().contentResolver
 
-                val file = File(
-                    requireContext().cacheDir,
-                    "upload_${System.currentTimeMillis()}.pdf"
-                )
+                val fileName = "upload_${System.currentTimeMillis()}.pdf"
+                val tempFile = File(requireContext().cacheDir, fileName)
 
-                file.outputStream().use { output ->
-                    inputStream?.copyTo(output)
+                contentResolver.openInputStream(uri)?.use { inputStream ->
+                    tempFile.outputStream().use { outputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
                 }
 
-                val requestFile = file.asRequestBody(
+                //
+                if (tempFile.length() == 0L) {
+                    Toast.makeText(
+                        requireContext(),
+                        "File is empty. Try another PDF.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    return@launch
+                }
+
+                val requestFile = tempFile.asRequestBody(
                     "application/pdf".toMediaTypeOrNull()
                 )
 
                 val body = MultipartBody.Part.createFormData(
                     "file",
-                    file.name,
+                    tempFile.name,
                     requestFile
                 )
 
@@ -406,15 +422,18 @@ class setting_activity : Fragment() {
                     .toRequestBody("text/plain".toMediaTypeOrNull())
 
                 val response =
-                    CloudinaryClient.api.mediaUpload(body, preset)
+                    CloudinaryClient.api.uploadPdf(body, preset)
 
-                val pdfUrl = response.secureUrl
-                val pdfName = customeName
-
-                savePdfUrlToFirestore(pdfName,pdfUrl)
+                val pdfUrl = response.secureUrl.trim()
+                savePdfUrlToFirestore(customName, pdfUrl)
 
             } catch (e: Exception) {
                 e.printStackTrace()
+                Toast.makeText(
+                    requireContext(),
+                    "Upload failed",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -477,7 +496,6 @@ class setting_activity : Fragment() {
                 adapter.notifyDataSetChanged()
             }
     }
-
     /* ======================= EDIT PROFILE ======================= */
     private fun showEditProfileDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_edit, null)

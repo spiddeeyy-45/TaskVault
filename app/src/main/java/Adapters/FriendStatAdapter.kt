@@ -1,5 +1,6 @@
 package Adapters
 
+import android.content.res.Resources
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -59,14 +60,14 @@ class FriendStatAdapter(
 
                 // Online Ring
                 if (friend.isOnline) {
-                    binding.cvFriendRing.setCardBackgroundColor(
-                        Color.parseColor("#C4A882")
-                    )
+                    binding.cvFriendRing.setCardBackgroundColor(Color.TRANSPARENT)
+                    binding.cvFriendRing.strokeWidth = 3.dpToPx()
+                    binding.cvFriendRing.setStrokeColor(Color.parseColor("#C4A882"))
                     binding.cvFriendRing.cardElevation = 8f
                 } else {
-                    binding.cvFriendRing.setCardBackgroundColor(
-                        Color.parseColor("#30C4A882")
-                    )
+                    binding.cvFriendRing.setCardBackgroundColor(Color.TRANSPARENT)
+                    binding.cvFriendRing.strokeWidth = 2.dpToPx()
+                    binding.cvFriendRing.setStrokeColor(Color.parseColor("#30C4A882"))
                     binding.cvFriendRing.cardElevation = 0f
                 }
 
@@ -75,6 +76,9 @@ class FriendStatAdapter(
                 }
             }
         }
+    }
+    fun Int.dpToPx(): Int {
+        return (this * Resources.getSystem().displayMetrics.density).toInt()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

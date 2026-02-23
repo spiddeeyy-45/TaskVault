@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.taskvault.R
 import com.example.taskvault.databinding.SessionLayoutBinding
 import java.text.SimpleDateFormat
 import java.util.*
@@ -80,6 +82,11 @@ class SessionAdapter(
 
             //  Cover Image Logic
             if (!session.coverImageUrl.isNullOrEmpty()) {
+                binding.ivSessionCover.visibility = View.VISIBLE
+                Glide.with(binding.root.context)
+                    .load(session.coverImageUrl)
+                    .placeholder(R.drawable.image)
+                    .into(binding.ivSessionCover)
                 binding.tvSessionProgress.text = "Cover"
                 binding.tvSessionProgress.setTextColor(
                     Color.parseColor("#D4AF37")

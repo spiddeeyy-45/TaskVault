@@ -45,7 +45,7 @@ class chat_activity : Fragment() {
 
         setupRecyclerViews()
         loadFriendRequests()
-        loadFriends()
+        loadChats()
         setupClicks()
             return binding.root
     }
@@ -155,7 +155,16 @@ class chat_activity : Fragment() {
     // ==========================
     // LOAD CHATS
     // ==========================
-    private fun loadFriends() {
+    private fun updateInboxBadge(count: Int) {
+
+        if (count > 0) {
+            binding.badgeCount.visibility = View.VISIBLE
+            binding.tvBadgeCount.text = count.toString()
+        } else {
+            binding.badgeCount.visibility = View.GONE
+        }
+    }
+    private fun loadChats() {
 
         friendsListener = firestore.collection("User")
             .document(currentUid)
@@ -167,22 +176,60 @@ class chat_activity : Fragment() {
 
                 chatList.clear()
 
+                var totalUnread = 0
+                val totalFriends = snapshots.documents.size
+                var processedFriends = 0
+
+                if (totalFriends == 0) {
+                    updateInboxBadge(0)
+                    chatAdapter.notifyDataSetChanged()
+                    return@addSnapshotListener
+                }
+
                 for (doc in snapshots.documents) {
 
                     val friendUid = doc.getString("uid") ?: continue
 
-                    chatList.add(
-                        ChatModel(
-                            chatId = "",
-                            friendUid = friendUid,
-                            lastMessage = "",
-                            lastTimestamp = 0L,
-                            unreadCount = 0
-                        )
-                    )
-                }
+                    val chatId = listOf(currentUid, friendUid)
+                        .sorted()
+                        .joinToString("_")
 
-                chatAdapter.notifyDataSetChanged()
+                    firestore.collection("Chats")
+                        .document(chatId)
+                        .get()
+                        .addOnSuccessListener { chatDoc ->
+
+                            val unreadMap =
+                                chatDoc.get("unreadCount") as? Map<*, *>
+
+                            val unread =
+                                unreadMap?.get(currentUid) as? Long ?: 0L
+
+                            totalUnread += unread.toInt()
+
+                            chatList.add(
+                                ChatModel(
+                                    chatId = chatId,
+                                    friendUid = friendUid,
+                                    lastMessage = chatDoc.getString("lastMessage") ?: "",
+                                    lastTimestamp = chatDoc.getLong("lastTimestamp") ?: 0L,
+                                    unreadCount = unread.toInt()
+                                )
+                            )
+
+                            processedFriends++
+
+                            // 🔥 Update only after all friends processed
+                            if (processedFriends == totalFriends) {
+
+                                // Sort by latest message
+                                chatList.sortByDescending { it.lastTimestamp }
+
+                                updateInboxBadge(totalUnread)
+                                chatAdapter.notifyDataSetChanged()
+                            }
+                        }
+                }
             }
     }
     private fun openOrCreateChat(friendUid: String) {
