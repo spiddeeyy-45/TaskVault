@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">TaskVault</string>
+    <string name="cloudinaryApiKey">953496458154923</string>
+    <string name="cloudName">dhbkbmww4</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

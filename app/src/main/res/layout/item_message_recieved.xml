@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- item_message_received.xml -->
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:id="@+id/rootLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="6dp"
+        android:gravity="start">
+
+        <!-- Friend small avatar -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/ivAvatarcontainer"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="4dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#2AC4A882"
+            app:strokeColor="#40C4A882"
+            app:strokeWidth="1dp">
+            <ImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/ic_person"/>
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="0">
+
+            <!-- Glass bubble -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/messageBubble"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#1EC4A882"
+                app:strokeColor="#28C4A882"
+                app:strokeWidth="1dp">
+
+                <TextView
+                    android:id="@+id/tvMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:maxWidth="240dp"
+                    android:textColor="#EDD9B8"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif-light"
+                    android:lineSpacingExtra="2dp"
+                    tools:text="Hey! Are you free tonight? 👋"/>
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp">
+                </ImageView>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Timestamp -->
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:layout_marginStart="4dp"
+                android:textColor="#35C4A882"
+                android:textSize="10sp"
+                android:fontFamily="sans-serif-light"
+                tools:text="10:42 AM"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

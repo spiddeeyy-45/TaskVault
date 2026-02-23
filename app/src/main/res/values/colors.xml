@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 🌈 Base Colors -->
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+
+    <!-- 💙 Brand / Primary Palette -->
+    <color name="colorPrimary">#3B82F6</color>       <!-- Main blue -->
+    <color name="colorPrimaryDark">#1E40AF</color>   <!-- Darker blue for status bar -->
+    <color name="colorAccent">#F7C9DEF8</color>      <!-- Accent / highlight -->
+    <color name="colorBackground">#F8FAFC</color>    <!-- App background -->
+    <color name="colorCard">#FFFFFF</color>          <!-- Card / container background -->
+
+    <!-- 🩵 Blue Shades (Extended Palette) -->
+    <color name="blue_50">#E3F2FD</color>
+    <color name="blue_100">#BBDEFB</color>
+    <color name="blue_600">#1E88E5</color>
+    <color name="blue_700">#1565C0</color>
+    <color name="blue_800">#0D47A1</color>
+    <color name="blue_900">#0B3C91</color>
+
+    <!-- ⚫ Text Colors -->
+    <color name="text_dark">#222831</color>          <!-- Main heading -->
+    <color name="text_body">#374151</color>          <!-- Body text -->
+    <color name="colorTextPrimary">#111827</color>   <!-- High-emphasis text -->
+    <color name="colorTextSecondary">#374151</color> <!-- Medium-emphasis text -->
+
+    <!-- 🧭 UI Element Colors -->
+    <color name="primary_blue">#3B82F6</color>       <!-- Primary buttons -->
+    <color name="danger_red">#EF4444</color>         <!-- Stop/Delete buttons -->
+    <color name="colorDanger">#EF4444</color>        <!-- Danger/alert color -->
+
+    <!-- Material 3 Brown & Beige Theme -->
+    <color name="md_theme_light_primary">#6D5C47</color>
+    <color name="md_theme_light_onPrimary">#FFFFFF</color>
+    <color name="md_theme_light_primaryContainer">#F5E6D3</color>
+    <color name="md_theme_light_onPrimaryContainer">#4A3F32</color>
+
+    <color name="md_theme_light_secondary">#9A8A7A</color>
+    <color name="md_theme_light_onSecondary">#FFFFFF</color>
+    <color name="md_theme_light_secondaryContainer">#F0E4D7</color>
+    <color name="md_theme_light_onSecondaryContainer">#5D5348</color>
+
+    <color name="md_theme_light_tertiary">#C4A57B</color>
+    <color name="md_theme_light_onTertiary">#FFFFFF</color>
+    <color name="md_theme_light_tertiaryContainer">#FFF4E3</color>
+    <color name="md_theme_light_onTertiaryContainer">#3E2E1C</color>
+
+    <color name="md_theme_light_background">#FFF9F5</color>
+    <color name="md_theme_light_onBackground">#1F1B16</color>
+    <color name="md_theme_light_surface">#FFFBF7</color>
+    <color name="md_theme_light_onSurface">#1F1B16</color>
+    <color name="md_theme_light_surfaceVariant">#F5EAE0</color>
+    <color name="md_theme_light_onSurfaceVariant">#504538</color>
+
+    <color name="md_theme_light_outline">#82786C</color>
+    <color name="md_theme_light_outlineVariant">#D6CAB9</color>
+
+    <!-- Additional colors -->
+    <color name="beige_50">#FFF9F5</color>
+    <color name="beige_100">#F5EAE0</color>
+    <color name="brown_50">#F5E6D3</color>
+    <color name="brown_100">#E8D4BA</color>
+    <color name="brown_500">#6D5C47</color>
+    <color name="brown_700">#4A3F32</color>
+
+    <color name="success_green">#4CAF50</color>
+    <color name="warning_orange">#FF9800</color>
+
+</resources>

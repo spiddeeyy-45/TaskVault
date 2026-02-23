@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="10dp"
+    android:layout_width="match_parent"
+    android:layout_height="175dp"
+    app:cardElevation="20dp"
+    app:cardCornerRadius="32dp"
+    android:background="@drawable/glassback">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    android:background="@drawable/back"
+    android:orientation="vertical">
+    <TextView
+        android:layout_margin="10dp"
+        android:id="@+id/tvDialogTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="About TaskVault"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/bungee"
+        android:textColor="#D4AF37"
+    android:paddingBottom="8dp"/>
+
+    <TextView
+        android:layout_marginTop="-20dp"
+        android:layout_marginLeft="10dp"
+        android:id="@+id/tvDialogMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#A68A64"
+        android:text="TaskVault helps you stay focused and productive with session tracking, reminders, and personalized analytics.\n\nVersion: 1.0.0"
+        android:textSize="16sp"/>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

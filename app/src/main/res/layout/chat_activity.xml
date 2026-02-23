@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="ChatLogic.chat_activity">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- ─────────────────────────────────────── -->
+            <!--            TOP BAR                      -->
+            <!-- ─────────────────────────────────────── -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btnBack"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="22dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#1EFFFFFF"
+                app:strokeColor="#28C4A882"
+                app:strokeWidth="1dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_arrow_back"
+                    app:tint="#C4A882"
+                    android:layout_gravity="center"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Inbox"
+                android:textColor="#C4A882"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.04"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/btnBack"/>
+
+            <!-- Notification badge count -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/badgeCount"
+                android:layout_width="wrap_content"
+                android:layout_height="22dp"
+                android:layout_marginStart="8dp"
+                app:cardCornerRadius="11dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#C4A882"
+                app:strokeColor="#00000000"
+                app:strokeWidth="0dp"
+                app:layout_constraintStart_toEndOf="@id/tvTitle"
+                app:layout_constraintTop_toTopOf="@id/tvTitle"
+                app:layout_constraintBottom_toBottomOf="@id/tvTitle">
+                <TextView
+                    android:id="@+id/tvBadgeCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text=""
+                    android:textColor="#1A0E05"
+                    android:textSize="11sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- New Chat / Compose Button -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btnNewChat"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="22dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#1EFFFFFF"
+                app:strokeColor="#28C4A882"
+                app:strokeWidth="1dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:clickable="true"
+                android:focusable="true">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_compose"
+                    app:tint="#C4A882"
+                    android:layout_gravity="center"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ─────────────────────────────────────── -->
+            <!--        FRIEND REQUESTS SECTION          -->
+            <!-- ─────────────────────────────────────── -->
+
+            <!-- Section Label -->
+            <TextView
+                android:id="@+id/tvRequestsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Friend Requests"
+                android:textColor="#42C4A882"
+                android:textSize="11sp"
+                android:letterSpacing="0.12"
+                android:textAllCaps="true"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="22dp"
+                app:layout_constraintTop_toBottomOf="@id/tvTitle"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <!-- Request count -->
+            <TextView
+                android:id="@+id/tvRequestCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2 pending"
+                android:textColor="#30C4A882"
+                android:textSize="11sp"
+                android:fontFamily="sans-serif-light"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tvRequestsLabel"
+                app:layout_constraintBottom_toBottomOf="@id/tvRequestsLabel"/>
+
+            <!-- Friend Requests RecyclerView (horizontal or vertical, max ~2 visible) -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerFriendRequests"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:clipToPadding="false"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:nestedScrollingEnabled="false"
+                app:layout_constraintTop_toBottomOf="@id/tvRequestsLabel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:listitem="@layout/item_friend_request"/>
+
+            <!-- ─────────────────────────────────────── -->
+            <!--          CHATS SECTION                  -->
+            <!-- ─────────────────────────────────────── -->
+
+            <!-- Divider line -->
+            <View
+                android:id="@+id/dividerChats"
+                android:layout_width="0dp"
+                android:layout_height="0.5dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="18dp"
+                android:background="#18C4A882"
+                app:layout_constraintTop_toBottomOf="@id/recyclerFriendRequests"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <!-- Chats Label -->
+            <TextView
+                android:id="@+id/tvChatsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Messages"
+                android:textColor="#42C4A882"
+                android:textSize="11sp"
+                android:letterSpacing="0.12"
+                android:textAllCaps="true"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/dividerChats"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <!-- Chats RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerChats"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="10dp"
+                android:clipToPadding="false"
+                android:paddingBottom="24dp"
+                app:layout_constraintTop_toBottomOf="@id/tvChatsLabel"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:listitem="@layout/item_chat"/>
+
+            <!-- Empty chats state -->
+            <LinearLayout
+                android:id="@+id/emptyChats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/tvChatsLabel"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:src="@drawable/ic_chat"
+                    app:tint="#18C4A882"
+                    android:alpha="0.5"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No messages yet"
+                    android:textColor="#55C4A882"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_marginTop="16dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Start a conversation with a friend"
+                    android:textColor="#28C4A882"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif-light"
+                    android:layout_marginTop="6dp"/>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+</layout>

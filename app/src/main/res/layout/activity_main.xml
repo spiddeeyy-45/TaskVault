@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/back"
+        tools:context=".MainActivity">
+
+        <!-- Fragment Container -->
+        <FrameLayout
+            android:id="@+id/FragmentContainer"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/customBottomBar" />
+        <!-- Custom Bottom Bar -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/customBottomBar"
+            android:layout_width="0dp"
+            android:layout_height="72dp"
+            android:layout_margin="16dp"
+            android:background="@drawable/bg_bottom_nav"
+            android:elevation="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- HOME -->
+            <LinearLayout
+                android:id="@+id/navHome"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/navMonitor"
+                app:layout_constraintWidth_percent="0.33">
+
+                <ImageView
+                    android:id="@+id/iconHome"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/home"
+                    app:tint="@color/bottom_nav_selector" />
+
+                <TextView
+                    android:id="@+id/hometext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Home"
+                    android:textSize="12sp"
+                    android:textColor="@color/bottom_nav_selector"/>
+            </LinearLayout>
+
+            <!-- MONITOR -->
+            <LinearLayout
+                android:id="@+id/navMonitor"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintStart_toEndOf="@id/navHome"
+                app:layout_constraintEnd_toStartOf="@id/navSetting"
+                app:layout_constraintWidth_percent="0.33">
+
+                <ImageView
+                    android:id="@+id/iconMonitor"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/task"
+                    app:tint="@color/bottom_nav_selector" />
+
+                <TextView
+                    android:id="@+id/textmonitor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Monitor"
+                    android:textSize="12sp"
+                    android:textColor="@color/bottom_nav_selector"/>
+            </LinearLayout>
+
+            <!-- SETTINGS -->
+            <LinearLayout
+                android:id="@+id/navSetting"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintStart_toEndOf="@id/navMonitor"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="0.33">
+
+                <ImageView
+                    android:id="@+id/iconSetting"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/setting"
+                    app:tint="@color/bottom_nav_selector" />
+
+                <TextView
+                    android:id="@+id/settingtext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Setting"
+                    android:textSize="12sp"
+                    android:textColor="@color/bottom_nav_selector"/>
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

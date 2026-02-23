@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:background="@drawable/dialogbackgroundround"
+    app:cardElevation="18dp"
+    android:layout_margin="15dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="670dp"
+        android:orientation="vertical"
+        android:background="@drawable/back"
+        android:padding="24dp">
+
+        <!-- Header with Logo/Icon -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="32dp"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Vault Settings"
+                android:textColor="#D4AF37"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.02"/>
+        </LinearLayout>
+
+        <!-- Detection Sensitivity Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="DETECTION SENSITIVITY"
+            android:textSize="12sp"
+            android:textAllCaps="true"
+            android:letterSpacing="0.15"
+            android:textColor="#A68A64"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginBottom="12dp"
+            android:layout_marginStart="4dp"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#1AFFFFFF"
+            app:strokeColor="#33FFFFFF"
+            app:strokeWidth="0.5dp"
+            android:layout_marginBottom="28dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp"
+                android:background="@drawable/glassback">
+
+                <SeekBar
+                    android:id="@+id/seekBarSensitivity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="100"
+                    android:progress="30"
+                    android:progressTint="#D4AF37"
+                    android:progressBackgroundTint="#33FFFFFF"
+                    android:thumbTint="#D4AF37"
+                    android:splitTrack="false"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="0dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="12dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Low"
+                        android:textColor="#A68A64"
+                        android:textSize="11sp"/>
+
+                    <TextView
+                        android:id="@+id/tvSensitivityValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="30%"
+                        android:textColor="#D4AF37"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-medium"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="High"
+                        android:textColor="#A68A64"
+                        android:gravity="end"
+                        android:textSize="11sp"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Alarm Type Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ALARM TYPE"
+            android:textSize="12sp"
+            android:textAllCaps="true"
+            android:letterSpacing="0.15"
+            android:textColor="#A68A64"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginBottom="12dp"
+            android:layout_marginStart="4dp"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#1AFFFFFF"
+            app:strokeColor="#33FFFFFF"
+            app:strokeWidth="0.5dp"
+            android:layout_marginBottom="28dp">
+
+            <RadioGroup
+                android:id="@+id/radioGroupAlarm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/glassback"
+                android:padding="4dp">
+
+                <RadioButton
+                    android:id="@+id/radioRingtone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ringtone + Vibration"
+                    android:textColor="#F5F5DC"
+                    android:textSize="15sp"
+                    android:padding="18dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:buttonTint="#D4AF37"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="#1AFFFFFF"
+                    android:layout_marginHorizontal="18dp"/>
+
+                <RadioButton
+                    android:id="@+id/radioVibration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Vibration Only"
+                    android:textColor="#F5F5DC"
+                    android:textSize="15sp"
+                    android:padding="18dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:buttonTint="#D4AF37"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="#1AFFFFFF"
+                    android:layout_marginHorizontal="18dp"/>
+
+                <RadioButton
+                    android:id="@+id/radioSilent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Silent (Flash Only)"
+                    android:textColor="#F5F5DC"
+                    android:textSize="15sp"
+                    android:padding="18dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:buttonTint="#D4AF37"/>
+            </RadioGroup>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Notifications Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="NOTIFICATIONS"
+            android:textSize="12sp"
+            android:textAllCaps="true"
+            android:letterSpacing="0.15"
+            android:textColor="#A68A64"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginBottom="12dp"
+            android:layout_marginStart="4dp"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#1AFFFFFF"
+            app:strokeColor="#33FFFFFF"
+            app:strokeWidth="0.5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/glassback"
+                android:padding="20dp"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Block notifications"
+                        android:textColor="#F5F5DC"
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="During active session"
+                        android:textColor="#A68A64"
+                        android:textSize="12sp"
+                        android:layout_marginTop="2dp"/>
+                </LinearLayout>
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchNotifications"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    app:thumbTint="#D4AF37"
+                    app:trackTint="#33FFFFFF"
+                    app:trackDecorationTint="#D4AF37"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

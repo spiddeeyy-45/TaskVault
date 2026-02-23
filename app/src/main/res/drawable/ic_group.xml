@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Left person body -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#C4A882"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M17,21 a8,8 0,0,0 -10,0"/>
+
+    <!-- Left person head -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#C4A882"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M12,11 m-3.5,0 a3.5,3.5 0,1,0 7,0 a3.5,3.5 0,1,0 -7,0"/>
+
+    <!-- Right person head -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#C4A882"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M19,7 m-3,0 a3,3 0,1,0 6,0 a3,3 0,1,0 -6,0"/>
+
+    <!-- Right person body -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#C4A882"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M23,21 a4,4 0,0,0 -3,-3.87"/>
+
+    <!-- Right person head connector -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#C4A882"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M16,3.13 a4,4 0,0,1 0,7.75"/>
+
+</vector>

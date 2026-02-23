@@ -1,0 +1,5 @@
+.gradle/
+build/
+#Firebase Config
+**/google-services.json
+

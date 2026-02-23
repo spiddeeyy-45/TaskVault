@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#0D0805"
+        tools:context=".search_activity">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- ─────────────────────────────────────── -->
+            <!--       BACK BUTTON + SEARCH BAR          -->
+            <!-- ─────────────────────────────────────── -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btnBack"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="22dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#1EFFFFFF"
+                app:strokeColor="#28C4A882"
+                app:strokeWidth="1dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_arrow_back"
+                    app:tint="#C4A882"
+                    android:layout_gravity="center"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Search Bar -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/searchBarContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#1EFFFFFF"
+                app:strokeColor="#50C4A882"
+                app:strokeWidth="1dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btnBack"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="2dp">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_search"
+                        app:tint="#70C4A882"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginEnd="10dp"/>
+
+                    <EditText
+                        android:id="@+id/etSearch"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="Search people..."
+                        android:textColor="#F0EAD6"
+                        android:textColorHint="#35C4A882"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif-light"
+                        android:background="@android:color/transparent"
+                        android:inputType="text"
+                        android:imeOptions="actionSearch"
+                        android:singleLine="true"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>
+
+                    <ImageView
+                        android:id="@+id/btnClear"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_close"
+                        app:tint="#45C4A882"
+                        android:layout_marginEnd="14dp"
+                        android:visibility="gone"
+                        android:clickable="true"
+                        android:focusable="true"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ─────────────────────────────────────── -->
+            <!--    RECENT SEARCHES (pre-query state)    -->
+            <!-- ─────────────────────────────────────── -->
+
+            <LinearLayout
+                android:id="@+id/recentSearchesSection"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="26dp"
+                app:layout_constraintTop_toBottomOf="@id/searchBarContainer"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <!-- Header Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Recent Searches"
+                        android:textColor="#42C4A882"
+                        android:textSize="11sp"
+                        android:letterSpacing="0.12"
+                        android:textAllCaps="true"
+                        android:fontFamily="sans-serif-medium"/>
+
+                    <TextView
+                        android:id="@+id/btnClearAll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Clear all"
+                        android:textColor="#30C4A882"
+                        android:textSize="11sp"
+                        android:fontFamily="sans-serif-light"
+                        android:clickable="true"
+                        android:focusable="true"/>
+
+                </LinearLayout>
+
+                <!-- Recent Item 1 -->
+                <LinearLayout
+                    android:id="@+id/recentItem1"
+                    android:layout_width="match_parent"
+                    android:layout_height="58dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:layout_marginTop="6dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <!-- Avatar placeholder -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
+                        app:cardCornerRadius="19dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="#18FFFFFF"
+                        app:strokeColor="#20C4A882"
+                        app:strokeWidth="1dp"
+                        android:layout_marginEnd="14dp">
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_person"
+                            app:tint="#45C4A882"
+                            android:layout_gravity="center"/>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvRecent1Name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="alex_doe"
+                            android:textColor="#80C4A882"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Alex Doe"
+                            android:textColor="#38C4A882"
+                            android:textSize="11sp"
+                            android:fontFamily="sans-serif-light"
+                            android:layout_marginTop="2dp"/>
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_north_west"
+                        app:tint="#25C4A882"/>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="72dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="#12C4A882"/>
+
+                <!-- Recent Item 2 -->
+                <LinearLayout
+                    android:id="@+id/recentItem2"
+                    android:layout_width="match_parent"
+                    android:layout_height="58dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
+                        app:cardCornerRadius="19dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="#18FFFFFF"
+                        app:strokeColor="#20C4A882"
+                        app:strokeWidth="1dp"
+                        android:layout_marginEnd="14dp">
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_person"
+                            app:tint="#45C4A882"
+                            android:layout_gravity="center"/>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvRecent2Name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="maya_k"
+                            android:textColor="#80C4A882"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Maya Khan"
+                            android:textColor="#38C4A882"
+                            android:textSize="11sp"
+                            android:fontFamily="sans-serif-light"
+                            android:layout_marginTop="2dp"/>
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_north_west"
+                        app:tint="#25C4A882"/>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="72dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="#12C4A882"/>
+
+                <!-- Recent Item 3 -->
+                <LinearLayout
+                    android:id="@+id/recentItem3"
+                    android:layout_width="match_parent"
+                    android:layout_height="58dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
+                        app:cardCornerRadius="19dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="#18FFFFFF"
+                        app:strokeColor="#20C4A882"
+                        app:strokeWidth="1dp"
+                        android:layout_marginEnd="14dp">
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_person"
+                            app:tint="#45C4A882"
+                            android:layout_gravity="center"/>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvRecent3Name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="jordan_w"
+                            android:textColor="#80C4A882"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Jordan Wright"
+                            android:textColor="#38C4A882"
+                            android:textSize="11sp"
+                            android:fontFamily="sans-serif-light"
+                            android:layout_marginTop="2dp"/>
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_north_west"
+                        app:tint="#25C4A882"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- ─────────────────────────────────────── -->
+            <!--    SEARCH RESULTS (post-query state)    -->
+            <!-- ─────────────────────────────────────── -->
+
+            <LinearLayout
+                android:id="@+id/searchResultsSection"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="26dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/searchBarContainer"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <TextView
+                    android:id="@+id/tvResultsCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="People"
+                    android:textColor="#42C4A882"
+                    android:textSize="11sp"
+                    android:letterSpacing="0.12"
+                    android:textAllCaps="true"
+                    android:fontFamily="sans-serif-medium"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"/>
+
+            </LinearLayout>
+
+            <!-- Results RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerSearchResults"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                android:clipToPadding="false"
+                android:paddingBottom="32dp"
+                app:layout_constraintTop_toBottomOf="@id/searchResultsSection"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:listitem="@layout/item_user_result"/>
+
+            <!-- ─────────────────────────────────────── -->
+            <!--           NO RESULTS STATE              -->
+            <!-- ─────────────────────────────────────── -->
+
+            <LinearLayout
+                android:id="@+id/noResultsState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/searchBarContainer"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:src="@drawable/ic_person"
+                    app:tint="#18C4A882"
+                    android:alpha="0.5"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No users found"
+                    android:textColor="#60C4A882"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_marginTop="18dp"/>
+
+                <TextView
+                    android:id="@+id/tvNoResultsHint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Try searching by username or name"
+                    android:textColor="#30C4A882"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif-light"
+                    android:layout_marginTop="6dp"/>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+</layout>

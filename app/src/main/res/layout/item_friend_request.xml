@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="8dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#12FFFFFF"
+            app:strokeColor="#1AC4A882"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <!-- User Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <!-- Avatar -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        app:cardCornerRadius="23dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="#20C4A882"
+                        app:strokeColor="#30C4A882"
+                        app:strokeWidth="1dp">
+                        <ImageView
+                            android:id="@+id/ivRequestAvatar"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/ic_person"
+                            android:scaleType="center"
+                            android:padding="10dp"/>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Name + Username -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="12dp">
+
+                        <TextView
+                            android:id="@+id/tvRequestName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Alex Doe"
+                            android:textColor="#CCF0EAD6"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif-medium"
+                            tools:text="Alex Doe"/>
+
+                        <TextView
+                            android:id="@+id/tvRequestUsername"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="alex_doe"
+                            android:textColor="#40C4A882"
+                            android:textSize="11sp"
+                            android:fontFamily="sans-serif-light"
+                            android:layout_marginTop="2dp"
+                            />
+
+                    </LinearLayout>
+
+                    <!-- Time -->
+                    <TextView
+                        android:id="@+id/tvRequestTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2h ago"
+                        android:textColor="#28C4A882"
+                        android:textSize="10sp"
+                        android:fontFamily="sans-serif-light"
+                        tools:text="2h ago"/>
+
+                </LinearLayout>
+
+                <!-- Accept / Decline buttons -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="8dp">
+
+                    <!-- Accept -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/btnAccept"
+                        android:layout_width="0dp"
+                        android:layout_height="38dp"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="14dp"
+                        app:cardElevation="4dp"
+                        app:cardBackgroundColor="#C4A882"
+                        app:strokeColor="#00000000"
+                        app:strokeWidth="0dp"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="center"
+                            android:layout_marginEnd="6dp">
+
+                            <ImageView
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:src="@drawable/ic_check"
+                                app:tint="#1A0E05"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Accept"
+                                android:textColor="#1A0E05"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-medium"/>
+
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Decline -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/btnDecline"
+                        android:layout_width="0dp"
+                        android:layout_height="38dp"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="14dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="#12FFFFFF"
+                        app:strokeColor="#22C4A882"
+                        app:strokeWidth="1dp"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="center"
+                            android:layout_marginEnd="6dp">
+
+                            <ImageView
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:src="@drawable/ic_close" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Decline"
+                                android:textColor="#55C4A882"
+                                android:textSize="13sp"
+                                android:fontFamily="sans-serif-light"/>
+
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+</layout>

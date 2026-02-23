@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="UI.home_activity">
+
+        <!-- ══════════════════════════════════════════ -->
+        <!--          MAIN CONSTRAINT LAYOUT            -->
+        <!-- ══════════════════════════════════════════ -->
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- ─────────────────────────────────────── -->
+            <!--  TOP BAR: App Title + Chat Icon         -->
+            <!-- ─────────────────────────────────────── -->
+
+            <TextView
+                android:id="@+id/tvAppTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TaskVault"
+                android:textColor="#C4A882"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.06"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <!-- Chat Button -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/btnChat"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="22dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#1EFFFFFF"
+                app:strokeColor="#30C4A882"
+                app:strokeWidth="1dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_chat"
+                    app:tint="#C4A882"
+                    android:layout_gravity="center"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ─────────────────────────────────────── -->
+            <!--              SEARCH BAR                 -->
+            <!-- ─────────────────────────────────────── -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/searchBarContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="14dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#16FFFFFF"
+                app:strokeColor="#25C4A882"
+                app:strokeWidth="1dp"
+                app:layout_constraintTop_toBottomOf="@id/tvAppTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="2dp">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_search"
+                        app:tint="#60C4A882"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="10dp"/>
+
+                    <EditText
+                        android:id="@+id/searchBar"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:hint="Search friends..."
+                        android:textColor="#F0EAD6"
+                        android:textColorHint="#38C4A882"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif-light"
+                        android:background="@android:color/transparent"
+                        android:inputType="text"
+                        android:imeOptions="actionSearch"
+                        android:paddingEnd="16dp"/>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ─────────────────────────────────────── -->
+            <!--       FRIENDS LABEL                     -->
+            <!-- ─────────────────────────────────────── -->
+
+            <TextView
+                android:id="@+id/tvFriendsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Friends"
+                android:textColor="#50C4A882"
+                android:textSize="11sp"
+                android:letterSpacing="0.14"
+                android:textAllCaps="true"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginStart="22dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintTop_toBottomOf="@id/searchBarContainer"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <!-- ─────────────────────────────────────── -->
+            <!--    FRIENDS HORIZONTAL RECYCLERVIEW      -->
+            <!--    (replaces static HorizontalScrollView) -->
+            <!-- ─────────────────────────────────────── -->
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/friendsScrollView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:clipToPadding="false"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="4dp"
+                android:scrollbars="none"
+                app:layout_constraintTop_toBottomOf="@id/tvFriendsLabel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:listitem="@layout/item_friends"/>
+
+            <!-- ─────────────────────────────────────── -->
+            <!--   SESSION TOGGLE PILL — MY / FRIENDS    -->
+            <!-- ─────────────────────────────────────── -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/sessionToggleContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#12FFFFFF"
+                app:strokeColor="#22C4A882"
+                app:strokeWidth="1dp"
+                app:layout_constraintTop_toBottomOf="@id/friendsScrollView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <!-- My Sessions — ACTIVE -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/tabMySessions"
+                        android:layout_width="0dp"
+                        android:layout_height="46dp"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="6dp"
+                        app:cardBackgroundColor="#C4A882"
+                        app:strokeColor="#00000000"
+                        app:strokeWidth="0dp"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:id="@+id/icMySession"
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:src="@drawable/ic_person"
+                                app:tint="#1A0E05"
+                                android:layout_marginEnd="7dp"/>
+
+                            <TextView
+                                android:id="@+id/tvMysession"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="My Sessions"
+                                android:textColor="#1A0E05"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-medium"/>
+
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Friends Sessions — INACTIVE -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/tabFriendsSessions"
+                        android:layout_width="0dp"
+                        android:layout_height="46dp"
+                        android:layout_weight="1"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="@android:color/transparent"
+                        app:strokeColor="#00000000"
+                        app:strokeWidth="0dp"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:id="@+id/icFriendSession"
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:src="@drawable/ic_group"
+                                app:tint="#48C4A882"
+                                android:layout_marginEnd="7dp"/>
+
+                            <TextView
+                                android:id="@+id/tvfriendsession"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Friends"
+                                android:textColor="#48C4A882"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-light"/>
+
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Sessions count sub-label -->
+            <TextView
+                android:id="@+id/tvSessionsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Recent"
+                android:textColor="#40C4A882"
+                android:textSize="11sp"
+                android:letterSpacing="0.14"
+                android:textAllCaps="true"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginStart="22dp"
+                android:layout_marginTop="18dp"
+                app:layout_constraintTop_toBottomOf="@id/sessionToggleContainer"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <!-- ─────────────────────────────────────── -->
+            <!--          SESSIONS RECYCLERVIEW          -->
+            <!-- ─────────────────────────────────────── -->
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewSessions"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
+                android:clipToPadding="false"
+                android:paddingHorizontal="16dp"
+                android:paddingBottom="100dp"
+                app:layout_constraintTop_toBottomOf="@id/tvSessionsLabel"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:listitem="@layout/session_layout"/>
+
+            <!-- ─────────────────────────────────────── -->
+            <!--             EMPTY STATE                 -->
+            <!-- ─────────────────────────────────────── -->
+
+            <LinearLayout
+                android:id="@+id/emptyState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/sessionToggleContainer"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:layout_width="88dp"
+                    android:layout_height="88dp"
+                    android:src="@drawable/ic_empty_session"
+                    app:tint="#20C4A882"
+                    android:alpha="0.6"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No sessions yet"
+                    android:textColor="#80C4A882"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_marginTop="16dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Upload a PDF to get started"
+                    android:textColor="#35C4A882"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif-light"
+                    android:layout_marginTop="6dp"/>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- ════════════════════════════════════════════════ -->
+        <!--         FAB — PDF UPLOAD  (preserved)            -->
+        <!-- ════════════════════════════════════════════════ -->
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fabUploadPdf"
+            android:layout_width="62dp"
+            android:layout_height="62dp"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="24dp"
+            app:icon="@drawable/monitor"
+            app:iconSize="28dp"
+            app:iconTint="#C4A882"
+            app:backgroundTint="#18FFFFFF"
+            app:elevation="12dp"
+            app:cornerRadius="20dp"
+            app:strokeColor="#30C4A882"
+            app:strokeWidth="1dp"/>
+
+    </FrameLayout>
+</layout>
