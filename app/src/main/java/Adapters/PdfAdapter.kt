@@ -10,15 +10,16 @@ import java.util.Date
 import java.util.Locale
 
 class PdfAdapter(
-    private val list: MutableList<PdfModel>,
     private val onClick: (PdfModel) -> Unit
 ) : RecyclerView.Adapter<PdfAdapter.ViewHolder>() {
+
+    private val originalList = mutableListOf<PdfModel>()
+    private val filteredList = mutableListOf<PdfModel>()
 
     inner class ViewHolder(val binding: ItemPdfPickerBinding)
         : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(pdf: PdfModel) {
-
             binding.tvItemFileName.text = pdf.name
             binding.tvItemDate.text = formatDate(pdf.uploadedAt)
 
@@ -37,10 +38,36 @@ class PdfAdapter(
         return ViewHolder(binding)
     }
 
-    override fun getItemCount() = list.size
+    override fun getItemCount() = filteredList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(list[position])
+        holder.bind(filteredList[position])
+    }
+
+    fun updateData(newList: List<PdfModel>) {
+        originalList.clear()
+        originalList.addAll(newList)
+
+        filteredList.clear()
+        filteredList.addAll(newList)
+
+        notifyDataSetChanged()
+    }
+
+    fun filter(query: String) {
+        filteredList.clear()
+
+        if (query.isEmpty()) {
+            filteredList.addAll(originalList)
+        } else {
+            filteredList.addAll(
+                originalList.filter {
+                    it.name.contains(query, ignoreCase = true)
+                }
+            )
+        }
+
+        notifyDataSetChanged()
     }
 
     private fun formatDate(timestamp: Long): String {

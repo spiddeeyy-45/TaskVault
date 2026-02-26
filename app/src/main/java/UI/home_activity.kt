@@ -109,31 +109,40 @@ class home_activity : Fragment() {
 
         dialog.show()
     }
-    private fun uploadPdfToCloudinary(uri: Uri,customeName:String) {
+    private fun uploadPdfToCloudinary(uri: Uri, customName: String) {
 
         lifecycleScope.launch {
 
             try {
 
-                val inputStream =
-                    requireContext().contentResolver.openInputStream(uri)
+                val contentResolver = requireContext().contentResolver
 
-                val file = File(
-                    requireContext().cacheDir,
-                    "upload_${System.currentTimeMillis()}.pdf"
-                )
+                val fileName = "upload_${System.currentTimeMillis()}.pdf"
+                val tempFile = File(requireContext().cacheDir, fileName)
 
-                file.outputStream().use { output ->
-                    inputStream?.copyTo(output)
+                contentResolver.openInputStream(uri)?.use { inputStream ->
+                    tempFile.outputStream().use { outputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
                 }
 
-                val requestFile = file.asRequestBody(
+                //
+                if (tempFile.length() == 0L) {
+                    Toast.makeText(
+                        requireContext(),
+                        "File is empty. Try another PDF.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    return@launch
+                }
+
+                val requestFile = tempFile.asRequestBody(
                     "application/pdf".toMediaTypeOrNull()
                 )
 
                 val body = MultipartBody.Part.createFormData(
                     "file",
-                    file.name,
+                    tempFile.name,
                     requestFile
                 )
 
@@ -143,17 +152,19 @@ class home_activity : Fragment() {
                 val response =
                     CloudinaryClient.api.uploadPdf(body, preset)
 
-                val pdfUrl = response.secureUrl
-                val pdfName = customeName
-
-                savePdfUrlToFirestore(pdfName,pdfUrl)
+                val pdfUrl = response.secureUrl.trim()
+                savePdfUrlToFirestore(customName, pdfUrl)
 
             } catch (e: Exception) {
                 e.printStackTrace()
+                Toast.makeText(
+                    requireContext(),
+                    "Upload failed",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
-
     private fun savePdfUrlToFirestore(pdfName: String, pdfUrl: String) {
 
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
@@ -170,7 +181,6 @@ class home_activity : Fragment() {
             .collection("PDFs")
             .add(pdfData)
     }
-
     private fun setupSearch() {
         binding.searchBarContainer.setOnClickListener{
             parentFragmentManager.beginTransaction()
