@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/shape_avatar_highlight.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <gradient
+        android:type="radial"
+        android:gradientRadius="14dp"
+        android:startColor="#30FFFFFF"
+        android:endColor="#00FFFFFF"
+        android:centerX="0.3"
+        android:centerY="0.3"/>
+</shape>

@@ -38,7 +38,6 @@
                 android:fontFamily="sans-serif-medium"
                 android:layout_marginTop="-16dp" />
 
-            <!-- Subtitle -->
             <TextView
                 android:id="@+id/vault_subtitle"
                 android:layout_width="wrap_content"
@@ -50,7 +49,6 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="32dp" />
 
-            <!-- Card Container for Input Fields -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -69,7 +67,6 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <!-- Full Name Input -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/fullname_input"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -100,7 +97,6 @@
                             android:paddingBottom="16dp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Email Input -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/email_input"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -132,7 +128,6 @@
                             android:paddingBottom="16dp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Phone Input -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/phone_input"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -164,7 +159,6 @@
                             android:paddingBottom="16dp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Password Input -->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/password_input"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -211,6 +205,7 @@
                 android:textSize="16sp"
                 android:fontFamily="sans-serif-medium"
                 android:letterSpacing="0.01"
+                app:backgroundTint="#A68A64"
                 app:cornerRadius="12dp"
                 app:elevation="4dp"
                 android:layout_marginTop="24dp"

@@ -1,14 +1,17 @@
 package Fragments
 
+import Adapters.PDFpickerAdapter
 import CloudinaryImageHandler.CloudinaryClient
+import DataClass.PdfModel
 import UI.FaceTracker
 import android.Manifest
 import android.app.NotificationManager
 import android.content.Context
 import com.google.android.material.materialswitch.MaterialSwitch
-
+import androidx.core.widget.addTextChangedListener
 import android.content.Context.VIBRATOR_SERVICE
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
@@ -23,6 +26,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -31,13 +37,18 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.taskvault.R
 import com.example.taskvault.databinding.StudyActivityBinding
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import kotlinx.coroutines.*
@@ -79,12 +90,17 @@ class study_activity : Fragment() {
     /* ======================= DROWSINESS LOGIC ======================= */
 
     private var eyeClosedStartTime = 0L
+
     private var mouthOpenStartTime = 0L
     private var faceNotVisibleStartTime = 0L
+    private var eyeClosedFrameCount = 0
+    private var eyeClosedStableFrames = 0
+    private val EYE_STABLE_FRAME_THRESHOLD = 5
+    private val EYE_FRAME_THRESHOLD = 4
 
-    private val EYE_CLOSE_TIME_THRESHOLD = 1200L
-    private val YAWN_TIME_THRESHOLD = 1500L
-    private val FACE_NOT_VISIBLE_THRESHOLD = 2000L
+    private val EYE_CLOSE_TIME_THRESHOLD = 800L
+    private val YAWN_TIME_THRESHOLD = 1000L
+    private val FACE_NOT_VISIBLE_THRESHOLD = 1000L
 
     private var DETECTION_PROB_THRESHOLD = 0.3f
     private var sessionMinutes = 0
@@ -96,6 +112,7 @@ class study_activity : Fragment() {
     private enum class TrackingState {
         IDLE, TRACKING, EYE_CLOSED, YAWNING, LOOKING_AWAY, ALERT
     }
+    private var saveDialogImageView: ImageView? = null
 
     private var currentState = TrackingState.IDLE
     private var faceDetectionCount = 0
@@ -108,17 +125,12 @@ class study_activity : Fragment() {
     ) { result ->
         result.data?.data?.let { uri ->
             selectedImageUri = uri
-            // Display selected image in dialog
-            (activity as? androidx.fragment.app.FragmentActivity)?.let { activity ->
-                activity.runOnUiThread {
-                    val dialogView = activity.findViewById<android.widget.ImageView>(R.id.ivCover)
-                    dialogView?.let {
-                        Glide.with(activity)
-                            .load(uri)
-                            .centerCrop()
-                            .into(it)
-                    }
-                }
+
+            saveDialogImageView?.let { imageView ->
+                Glide.with(this)
+                    .load(uri)
+                    .centerCrop()
+                    .into(imageView)
             }
         }
     }
@@ -179,12 +191,18 @@ class study_activity : Fragment() {
             startFocusSession()
         }
 
-        binding.btnStop.setOnClickListener {
-            stopSession()
-        }
 
         binding.btnSelectRingtone.setOnClickListener {
             selectRingtone()
+        }
+        binding.btnStopSession.setOnClickListener {
+            stopSession()
+        }
+        binding.btnOpenPdf.setOnClickListener {
+            showPdfSelectionDialog()
+        }
+        binding.btnClosePdf.setOnClickListener {
+            binding.layoutPdfReader.visibility = View.GONE
         }
 
         binding.btnSettings.setOnClickListener {
@@ -192,6 +210,9 @@ class study_activity : Fragment() {
         }
 
         // Initialize status
+        binding.layoutIdle.visibility = View.VISIBLE
+        binding.layoutSession.visibility = View.GONE
+        binding.layoutPdfReader.visibility = View.GONE
         updateStatus("Ready to start session", Color.GREEN)
         binding.tvTimer.text = "00:00"
         binding.tvWarningCount.text = "Warnings: 0"
@@ -226,19 +247,17 @@ class study_activity : Fragment() {
         faceDetectionCount = 0
         totalFrameCount = 0
 
-        binding.cameraCard.visibility = View.VISIBLE
-        binding.tvStatus.visibility = View.VISIBLE
-        binding.btnStart.visibility = View.GONE
-        binding.btnStop.visibility = View.VISIBLE
-        binding.inputLayoutTimer.isEnabled = false
-        binding.btnSettings.isEnabled = false
+        faceTracker.reset()
+
+        // 🔥 SWITCH TO SESSION LAYOUT
+        binding.layoutIdle.visibility = View.GONE
+        binding.layoutSession.visibility = View.VISIBLE
 
         updateStatus("Tracking active...", Color.BLUE)
 
         // Start session timer
         startSessionTimer()
     }
-
     private fun startSessionTimer() {
         lifecycleScope.launch {
             val endTime = sessionStartTime + (sessionMinutes * 60 * 1000L)
@@ -249,7 +268,9 @@ class study_activity : Fragment() {
                 val seconds = ((remaining % 60000) / 1000).toInt()
 
                 withContext(Dispatchers.Main) {
-                    binding.tvTimer.text = String.format("%02d:%02d", minutes, seconds)
+                    binding.tvTimerSession.text = String.format("%02d:%02d", minutes, seconds)
+                    binding.tvPdfTimer.text = String.format("%02d:%02d", minutes, seconds)
+
                 }
 
                 delay(1000)
@@ -263,23 +284,23 @@ class study_activity : Fragment() {
             }
         }
     }
-
     private fun stopSession() {
         cameraProvider?.unbindAll()
         faceDetector?.close()
         ringtone?.stop()
         enableNotifications()
+        faceTracker.reset()
 
-        binding.cameraCard.visibility = View.GONE
-        binding.btnStart.visibility = View.VISIBLE
-        binding.btnStop.visibility = View.GONE
-        binding.inputLayoutTimer.isEnabled = true
-        binding.btnSettings.isEnabled = true
-        binding.tvTimer.text = "00:00"
+        binding.layoutSession.visibility = View.GONE
+        binding.layoutPdfReader.visibility = View.GONE
+        binding.layoutIdle.visibility = View.VISIBLE
+
+        binding.tvTimerSession.text = "00:00"
+        binding.tvPdfTimer.text = "00:00"
 
         updateStatus("Session ended", Color.GREEN)
-
-        showSaveSessionDialog()
+        val actualDurationSeconds = (System.currentTimeMillis() - sessionStartTime) / 1000
+        showSaveSessionDialog(actualDurationSeconds)
     }
 
     /* ======================= CAMERA ======================= */
@@ -287,7 +308,6 @@ class study_activity : Fragment() {
     private fun startCameraPermissionCheck() {
         cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
     }
-
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
@@ -299,7 +319,7 @@ class study_activity : Fragment() {
                     .setTargetResolution(android.util.Size(640, 480))
                     .build()
                     .apply {
-                        setSurfaceProvider(binding.previewView.surfaceProvider)
+                        setSurfaceProvider(binding.previewViewSession.surfaceProvider)
                     }
 
                 val imageAnalysis = ImageAnalysis.Builder()
@@ -310,8 +330,8 @@ class study_activity : Fragment() {
                 val options = FaceDetectorOptions.Builder()
                     .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
                     .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
-                    .setContourMode(FaceDetectorOptions.CONTOUR_MODE_NONE)
-                    .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
+                    .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
+                    .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
                     .setMinFaceSize(0.3f)
                     .build()
 
@@ -335,7 +355,6 @@ class study_activity : Fragment() {
             }
         }, ContextCompat.getMainExecutor(requireContext()))
     }
-
     private fun processImageProxy(imageProxy: ImageProxy) {
         totalFrameCount++
 
@@ -368,7 +387,6 @@ class study_activity : Fragment() {
                 imageProxy.close()
             }
     }
-
     private fun handleFaces(faces: List<com.google.mlkit.vision.face.Face>, imageWidth: Int, imageHeight: Int) {
         if (currentState == TrackingState.IDLE) return
 
@@ -386,7 +404,6 @@ class study_activity : Fragment() {
             updateTrackingState(trackingResult)
         }
     }
-
     private fun handleNoFaceDetected() {
         if (faceNotVisibleStartTime == 0L) {
             faceNotVisibleStartTime = System.currentTimeMillis()
@@ -400,26 +417,33 @@ class study_activity : Fragment() {
             }
         }
     }
-
     private fun updateTrackingState(result: FaceTracker.TrackingResult) {
         when {
             result.isLookingAway -> {
                 currentState = TrackingState.LOOKING_AWAY
                 updateStatus("Looking away!", Color.YELLOW)
-                faceNotVisibleStartTime = System.currentTimeMillis()
+                if (System.currentTimeMillis() - faceNotVisibleStartTime >= FACE_NOT_VISIBLE_THRESHOLD) {
+                    triggerAlarm("Looking away too long")
+                    currentState = TrackingState.ALERT
+                    updateStatus("Focus on screen!", Color.RED)
+                    faceNotVisibleStartTime = 0L
+                }
             }
 
             result.isEyeClosed -> {
-                if (eyeClosedStartTime == 0L) {
-                    eyeClosedStartTime = System.currentTimeMillis()
-                    updateStatus("Eyes closing...", Color.YELLOW)
-                }
+                eyeClosedStableFrames++
 
-                if (System.currentTimeMillis() - eyeClosedStartTime >= EYE_CLOSE_TIME_THRESHOLD) {
-                    triggerAlarm("Eyes closed too long")
-                    currentState = TrackingState.ALERT
-                    updateStatus("Eyes closed! Stay alert!", Color.RED)
-                    eyeClosedStartTime = 0L
+                if (eyeClosedStableFrames >= EYE_STABLE_FRAME_THRESHOLD) {
+
+                    if (eyeClosedStartTime == 0L) {
+                        eyeClosedStartTime = System.currentTimeMillis()
+                    }
+
+                    if (System.currentTimeMillis() - eyeClosedStartTime >= 800L) {
+                        triggerAlarm("Eyes closed too long")
+                        eyeClosedStartTime = 0L
+                        eyeClosedStableFrames = 0
+                    }
                 }
             }
 
@@ -439,6 +463,9 @@ class study_activity : Fragment() {
 
             else -> {
                 // Reset timers when conditions are normal
+                eyeClosedFrameCount = 0
+                eyeClosedStartTime = 0L
+                eyeClosedStableFrames = 0
                 eyeClosedStartTime = 0L
                 mouthOpenStartTime = 0L
                 faceNotVisibleStartTime = 0L
@@ -449,11 +476,8 @@ class study_activity : Fragment() {
         }
 
         // Update stats
-        binding.tvStats.text = String.format(
-            "Faces: %d | Frames: %d",
-            faceDetectionCount,
-            totalFrameCount
-        )
+        binding.tvSessionFaces.text = faceDetectionCount.toString()
+        binding.tvSessionFrames.text = totalFrameCount.toString()
     }
 
     /* ======================= ALERT SYSTEM ======================= */
@@ -516,9 +540,8 @@ class study_activity : Fragment() {
         }
 
         // Update UI
-        binding.tvWarningCount.text = "Warnings: $warningCount"
+        binding.tvSessionWarnings.text = warningCount.toString()
     }
-
     private fun flashScreen() {
         binding.flashOverlay.apply {
             visibility = View.VISIBLE
@@ -533,9 +556,10 @@ class study_activity : Fragment() {
                 }
         }
     }
-
     private fun updateStatus(message: String, color: Int) {
         binding.tvStatus.text = message
+        binding.tvSessionStatus.text=message
+        binding.tvSessionStatus.setTextColor(color)
         binding.tvStatus.setTextColor(color)
     }
 
@@ -594,7 +618,6 @@ class study_activity : Fragment() {
         alert.getButton(AlertDialog.BUTTON_NEGATIVE).apply { setTextColor(Color.RED) }
         alert.show()
     }
-
     private fun saveSettings(sensitivity: Float, alarmType: String) {
         val prefs = requireContext().getSharedPreferences("stay_focus_prefs", 0)
         prefs.edit()
@@ -607,7 +630,6 @@ class study_activity : Fragment() {
 
         Toast.makeText(requireContext(), "Settings saved", Toast.LENGTH_SHORT).show()
     }
-
     private fun loadSettings() {
         val prefs = requireContext().getSharedPreferences("stay_focus_prefs", 0)
 
@@ -633,12 +655,10 @@ class study_activity : Fragment() {
 
         ringtoneLauncher.launch(intent)
     }
-
     private fun saveRingtonePreference(uriString: String) {
         val prefs = requireContext().getSharedPreferences("stay_focus_prefs", 0)
         prefs.edit().putString("RINGTONE_URI", uriString).apply()
     }
-
     private fun loadSavedRingtone() {
         val uriString = requireContext()
             .getSharedPreferences("stay_focus_prefs", 0)
@@ -658,16 +678,16 @@ class study_activity : Fragment() {
             .build()
     }
 
-
     /* ======================= SAVE SESSION ======================= */
 
-    private fun showSaveSessionDialog() {
+    private fun showSaveSessionDialog(actualDurationSeconds: Long) {
         val dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_save_session, null)
 
         val etTitle = dialogView.findViewById<android.widget.EditText>(R.id.etTitle)
         val etDesc = dialogView.findViewById<android.widget.EditText>(R.id.etDescription)
         val ivCover = dialogView.findViewById<android.widget.ImageView>(R.id.ivCover)
+        saveDialogImageView = ivCover
         val btnSelectImage = dialogView.findViewById<android.widget.Button>(R.id.btnSelectImage)
         val tvDuration = dialogView.findViewById<android.widget.TextView>(R.id.tvDuration)
         val tvWarnings = dialogView.findViewById<android.widget.TextView>(R.id.tvWarnings)
@@ -678,7 +698,9 @@ class study_activity : Fragment() {
         etTitle.setText("Focus Session ${dateFormat.format(Date())}")
 
         // Set session stats
-        tvDuration.text = "$sessionMinutes min"
+        val minutesPart = actualDurationSeconds / 60
+        val secondsPart = actualDurationSeconds % 60
+        tvDuration.text = "${minutesPart}m ${secondsPart}s"
         tvWarnings.text = warningCount.toString()
 
         // Load default image or selected image
@@ -722,7 +744,7 @@ class study_activity : Fragment() {
                 imageUri = selectedImageUri!!,
                 title = title,
                 description = description,
-                durationMinutes = sessionMinutes,
+                actualDurationSeconds = actualDurationSeconds,
                 warnings = warningCount
             )
 
@@ -731,14 +753,111 @@ class study_activity : Fragment() {
 
         alertDialog.show()
     }
+    private fun showPdfSelectionDialog() {
 
-    private fun saveSession(
-        imageUri: Uri,
-        title: String,
-        description: String,
-        durationMinutes: Int,
-        warnings: Int
-    ) {
+        val dialog = BottomSheetDialog(requireContext())
+        val view = layoutInflater.inflate(R.layout.select_pdf_reader, null)
+        dialog.setContentView(view)
+
+        val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerViewPdfs)
+        val tvCount = view.findViewById<TextView>(R.id.tvPdfCount)
+        val emptyState = view.findViewById<View>(R.id.emptyState)
+        val etSearch = view.findViewById<EditText>(R.id.etSearch)
+        val btnClose = view.findViewById<View>(R.id.btnClose)
+
+        val pdfList = mutableListOf<PdfModel>()
+
+        val adapter = PDFpickerAdapter { pdf ->
+            dialog.dismiss()
+            openPdfInReader(pdf.url, pdf.name)
+        }
+
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
+
+        btnClose.setOnClickListener { dialog.dismiss() }
+
+        etSearch.addTextChangedListener {
+            adapter.filter(it.toString())
+        }
+
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        FirebaseFirestore.getInstance()
+            .collection("User")
+            .document(uid)
+            .collection("PDFs")
+            .get()
+            .addOnSuccessListener { snapshot ->
+
+                pdfList.clear()
+
+                for (doc in snapshot.documents) {
+                    pdfList.add(
+                        PdfModel(
+                            id = doc.id,
+                            name = doc.getString("pdfName") ?: "",
+                            url = doc.getString("pdfUrl") ?: "",
+                            uploadedAt = doc.getLong("uploadedAt") ?: 0L
+                        )
+                    )
+                }
+
+                adapter.updateData(pdfList)
+
+                tvCount.text = "${pdfList.size} documents"
+
+                emptyState.visibility =
+                    if (pdfList.isEmpty()) View.VISIBLE else View.GONE
+                recyclerView.visibility =
+                    if (pdfList.isEmpty()) View.GONE else View.VISIBLE
+            }
+
+        dialog.show()
+        val bottomSheet =
+            dialog.findViewById<View>(
+                com.google.android.material.R.id.design_bottom_sheet
+            )
+        bottomSheet?.let {
+            val behavior = BottomSheetBehavior.from(it)
+            val screenHeight = Resources.getSystem().displayMetrics.heightPixels
+            val desiredHeight = (screenHeight * 0.85).toInt()
+            it.layoutParams.height = desiredHeight
+
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            behavior.skipCollapsed = true
+        }
+    }
+    private fun openPdfInReader(url: String, title: String) {
+
+        binding.layoutPdfReader.visibility = View.VISIBLE
+        binding.tvPdfTitle.text = title
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+
+                val inputStream = java.net.URL(url).openStream()
+
+                withContext(Dispatchers.Main) {
+
+                    binding.pdfView.fromStream(inputStream)
+                        .enableSwipe(true)
+                        .swipeHorizontal(false)
+                        .enableDoubletap(true)
+                        .onPageChange { page, pageCount ->
+                            binding.tvPdfPageInfo.text = "Page ${page + 1} / $pageCount"
+                        }
+                        .load()
+                }
+
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Failed to load PDF", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+    private fun saveSession(imageUri: Uri, title: String, description: String, actualDurationSeconds: Long, warnings: Int) {
         // Show progress overlay
         binding.progressOverlay.visibility = View.VISIBLE
 
@@ -749,14 +868,22 @@ class study_activity : Fragment() {
                 val preset = "TaskVaultSession".toRequestBody("text/plain".toMediaType())
 
                 val response = CloudinaryClient.api.uploadImage(filePart, preset)
+                val plannedDurationSeconds = sessionMinutes * 60
+
+                val status =
+                    if (actualDurationSeconds >= plannedDurationSeconds)
+                        "Completed"
+                    else
+                        "Incomplete"
 
                 // Save to Firestore
                 saveSessionToFirestore(
                     title = title,
                     description = description,
                     imageUrl = response.secureUrl,
-                    durationMinutes = durationMinutes,
-                    warnings = warnings
+                    durationMinutes = actualDurationSeconds,
+                    warnings = warnings,
+                    status=status
                 )
 
                 withContext(Dispatchers.Main) {
@@ -781,14 +908,7 @@ class study_activity : Fragment() {
             }
         }
     }
-
-    private fun saveSessionToFirestore(
-        title: String,
-        description: String,
-        imageUrl: String,
-        durationMinutes: Int,
-        warnings: Int
-    ) {
+    private fun saveSessionToFirestore(title: String, description: String, imageUrl: String, durationMinutes: Long, warnings: Int,status:String) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: run {
             Toast.makeText(requireContext(), "User not authenticated", Toast.LENGTH_SHORT).show()
             return
@@ -800,9 +920,10 @@ class study_activity : Fragment() {
             "coverImageUrl" to imageUrl,
             "durationMinutes" to durationMinutes,
             "warnings" to warnings,
+            "status" to status,
             "userId" to userId,
-            "createdAt" to FieldValue.serverTimestamp(),
-            "sessionDate" to com.google.firebase.Timestamp.now()
+            "timestamp" to System.currentTimeMillis(),
+            "sessionDate" to System.currentTimeMillis()
         )
 
         FirebaseFirestore.getInstance()
@@ -818,7 +939,6 @@ class study_activity : Fragment() {
                 throw e
             }
     }
-
     private fun uriToMultipart(uri: Uri): MultipartBody.Part {
         val inputStream = requireContext().contentResolver.openInputStream(uri)!!
         val file = File(requireContext().cacheDir, "upload_${System.currentTimeMillis()}.jpg")

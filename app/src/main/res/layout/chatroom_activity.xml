@@ -40,9 +40,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <!-- ─────────────────────────────────── -->
-            <!--            GLASS TOP BAR            -->
-            <!-- ─────────────────────────────────── -->
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/topBar"

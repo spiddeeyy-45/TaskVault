@@ -1,7 +1,4 @@
 package DataClass
-
-import com.google.firebase.Timestamp
-
 data class SessionModel(
     val sessionId: String = "",
     val ownerUid: String = "",

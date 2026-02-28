@@ -33,10 +33,10 @@
                 <ImageView
                     android:id="@+id/ivChatAvatar"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_person"
-                    android:scaleType="center"
-                    android:padding="12dp"/>
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_person" />
 
             </com.google.android.material.card.MaterialCardView>
 

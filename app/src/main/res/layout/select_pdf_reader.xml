@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#CC0D0805">
+    android:background="#CC0D0A12">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/dialogCard"
@@ -13,8 +14,8 @@
         android:layout_gravity="bottom"
         app:cardCornerRadius="28dp"
         app:cardElevation="0dp"
-        app:cardBackgroundColor="#EE130E07"
-        app:strokeColor="#30C4A882"
+        app:cardBackgroundColor="#EE120D18"
+        app:strokeColor="#30D4AF37"
         app:strokeWidth="1dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -27,10 +28,10 @@
                 android:layout_width="40dp"
                 android:layout_height="4dp"
                 android:layout_marginTop="12dp"
-                android:background="#40C4A882"
+                android:background="#40D4AF37"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <!-- ─────────────────────────────────── -->
             <!--  HEADER ROW                         -->
@@ -49,54 +50,50 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <!-- PDF icon -->
+                <!-- PDF icon badge -->
                 <com.google.android.material.card.MaterialCardView
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
                     app:cardCornerRadius="13dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="#22C4A882"
-                    app:strokeColor="#35C4A882"
+                    app:cardBackgroundColor="#22D4AF37"
+                    app:strokeColor="#35D4AF37"
                     app:strokeWidth="1dp">
 
                     <ImageView
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:src="@drawable/ic_pdf"
-                        app:tint="#C4A882"
-                        android:layout_gravity="center"/>
-
+                        app:tint="#D4AF37"
+                        android:layout_gravity="center" />
                 </com.google.android.material.card.MaterialCardView>
-
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:layout_marginStart="12dp">
+                    android:layout_marginStart="14dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="My PDFs"
-                        android:textColor="#F0EAD6"
-                        android:textSize="17sp"
+                        android:textColor="#F5F5DC"
+                        android:textSize="18sp"
                         android:textStyle="bold"
-                        android:fontFamily="sans-serif-medium"/>
+                        android:fontFamily="sans-serif-medium" />
 
                     <TextView
                         android:id="@+id/tvPdfCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0 documents"
-                        android:textColor="#50C4A882"
+                        android:textColor="#50D4AF37"
                         android:textSize="11sp"
                         android:fontFamily="sans-serif-light"
-                        android:layout_marginTop="1dp"/>
-
+                        android:layout_marginTop="2dp" />
                 </LinearLayout>
 
-                <!-- Close button -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/btnClose"
                     android:layout_width="36dp"
@@ -104,7 +101,7 @@
                     app:cardCornerRadius="18dp"
                     app:cardElevation="0dp"
                     app:cardBackgroundColor="#14FFFFFF"
-                    app:strokeColor="#22C4A882"
+                    app:strokeColor="#22D4AF37"
                     app:strokeWidth="1dp"
                     android:clickable="true"
                     android:focusable="true">
@@ -113,9 +110,8 @@
                         android:layout_width="18dp"
                         android:layout_height="18dp"
                         android:src="@drawable/ic_close"
-                        app:tint="#C4A882"
-                        android:layout_gravity="center"/>
-
+                        app:tint="#A68A64"
+                        android:layout_gravity="center" />
                 </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
@@ -134,7 +130,7 @@
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="#16FFFFFF"
-                app:strokeColor="#22C4A882"
+                app:strokeColor="#22D4AF37"
                 app:strokeWidth="1dp"
                 app:layout_constraintTop_toBottomOf="@id/layoutHeader"
                 app:layout_constraintStart_toStartOf="parent"
@@ -151,9 +147,9 @@
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:src="@drawable/ic_search"
-                        app:tint="#50C4A882"
+                        app:tint="#50D4AF37"
                         android:layout_marginStart="14dp"
-                        android:layout_marginEnd="10dp"/>
+                        android:layout_marginEnd="10dp" />
 
                     <EditText
                         android:id="@+id/etSearch"
@@ -161,15 +157,14 @@
                         android:layout_height="44dp"
                         android:layout_weight="1"
                         android:hint="Search PDFs..."
-                        android:textColor="#F0EAD6"
-                        android:textColorHint="#30C4A882"
+                        android:textColor="#F5F5DC"
+                        android:textColorHint="#30D4AF37"
                         android:textSize="13sp"
                         android:fontFamily="sans-serif-light"
                         android:background="@android:color/transparent"
                         android:inputType="text"
                         android:imeOptions="actionSearch"
-                        android:paddingEnd="14dp"/>
-
+                        android:paddingEnd="14dp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -177,12 +172,12 @@
                 android:id="@+id/divider"
                 android:layout_width="0dp"
                 android:layout_height="0.5dp"
-                android:background="#18C4A882"
+                android:background="#18D4AF37"
                 android:layout_marginTop="14dp"
                 android:layout_marginHorizontal="20dp"
                 app:layout_constraintTop_toBottomOf="@id/searchContainer"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <!-- ─────────────────────────────────── -->
             <!--  PDF LIST RECYCLERVIEW              -->
@@ -195,14 +190,13 @@
                 android:layout_marginTop="8dp"
                 android:clipToPadding="false"
                 android:paddingHorizontal="16dp"
-                android:paddingBottom="100dp"
+                android:paddingBottom="24dp"
                 android:scrollbars="none"
                 app:layout_constraintTop_toBottomOf="@id/divider"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:listitem="@layout/item_pdf_picker"
-                xmlns:tools="http://schemas.android.com/tools"/>
+                tools:listitem="@layout/item_pdf_picker" />
 
             <!-- ─────────────────────────────────── -->
             <!--  EMPTY STATE                        -->
@@ -220,53 +214,45 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <ImageView
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:src="@drawable/ic_pdf"
-                    app:tint="#18C4A882"/>
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#12D4AF37"
+                    app:strokeColor="#20D4AF37"
+                    app:strokeWidth="1dp">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:src="@drawable/ic_pdf"
+                        app:tint="#25D4AF37"
+                        android:layout_gravity="center" />
+                </com.google.android.material.card.MaterialCardView>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="No PDFs uploaded yet"
-                    android:textColor="#60C4A882"
+                    android:textColor="#60D4AF37"
                     android:textSize="15sp"
                     android:textStyle="bold"
                     android:fontFamily="sans-serif-medium"
-                    android:layout_marginTop="14dp"/>
+                    android:layout_marginTop="16dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Use the + button to upload your first PDF"
-                    android:textColor="#30C4A882"
+                    android:text="Tap + Upload to add your first PDF"
+                    android:textColor="#30D4AF37"
                     android:textSize="12sp"
                     android:fontFamily="sans-serif-light"
                     android:gravity="center"
-                    android:layout_marginTop="6dp"/>
+                    android:layout_marginTop="6dp" />
 
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fabUpload"
-        android:layout_width="wrap_content"
-        android:layout_height="52dp"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="24dp"
-        android:text="PDF"
-        android:textColor="#1A0E05"
-        android:textSize="13sp"
-        android:textStyle="bold"
-        android:fontFamily="sans-serif-medium"
-        app:icon="@drawable/ic_pdf"
-        app:iconSize="18dp"
-        app:iconTint="#1A0E05"
-        app:backgroundTint="#C4A882"
-        app:elevation="10dp"
-        app:cornerRadius="26dp"
-        app:strokeWidth="0dp"/>
-
 </FrameLayout>

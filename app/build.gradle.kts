@@ -93,6 +93,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
     implementation(libs.firebase.messaging.ktx)
     kapt ("com.github.bumptech.glide:compiler:4.16.0")
+    implementation ("com.github.mhiew:android-pdf-viewer:3.2.0-beta.3")
 
 
 

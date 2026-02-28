@@ -33,10 +33,10 @@
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardAvatar"
                     android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#20C4A882"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="0dp"
-                    app:cardBackgroundColor="#20C4A882"
                     app:strokeColor="#30C4A882"
                     app:strokeWidth="1dp">
 
@@ -44,9 +44,9 @@
                         android:id="@+id/ivAvatar"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:src="@drawable/ic_person"
-                        android:scaleType="center"
-                        android:padding="8dp"/>
+                        android:padding="8dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_person" />
 
                 </com.google.android.material.card.MaterialCardView>
 

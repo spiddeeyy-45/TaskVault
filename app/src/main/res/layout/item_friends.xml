@@ -55,11 +55,6 @@
 
     </LinearLayout>
 
-    <!-- ─────────────────────────────── -->
-    <!--  FRIEND ITEM  (type = 1)        -->
-    <!--  Active ring  = solid #C4A882   -->
-    <!--  Inactive ring = #30C4A882      -->
-    <!-- ─────────────────────────────── -->
 
     <LinearLayout
         android:id="@+id/layoutFriendItem"

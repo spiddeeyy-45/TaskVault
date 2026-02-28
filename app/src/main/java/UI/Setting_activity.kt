@@ -47,7 +47,8 @@ import java.io.File
 
 class setting_activity : Fragment() {
 
-    private lateinit var binding: SettingActivityBinding
+    private var _binding: SettingActivityBinding? = null
+    private val binding get() = _binding!!
     private var dialogProfileImage: ImageView? = null
     private lateinit var sharedPrefs: SharedPreferences
     private var selectedImageUri: Uri? = null
@@ -65,7 +66,7 @@ class setting_activity : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = SettingActivityBinding.inflate(inflater, container, false)
+        _binding = SettingActivityBinding.inflate(inflater, container, false)
         sharedPrefs = requireContext().getSharedPreferences("user_prefs", 0)
         setupUI()
 
@@ -168,6 +169,7 @@ class setting_activity : Fragment() {
             .document(userId)
             .get()
             .addOnSuccessListener { userDoc ->
+                if (_binding == null || !isAdded) return@addOnSuccessListener
                 if (userDoc.exists()) {
                     binding.tvUserName.text = userDoc.getString("fullName") ?: ""
                     binding.tvUserEmail.text = userDoc.getString("email") ?: ""
@@ -182,6 +184,7 @@ class setting_activity : Fragment() {
             .document("Image")
             .get()
             .addOnSuccessListener { profileDoc ->
+                if (_binding == null || !isAdded) return@addOnSuccessListener
                 val imageUrl = profileDoc.getString("profileImageUrl")
                 if (!imageUrl.isNullOrEmpty()) {
                     Glide.with(this)
@@ -591,5 +594,9 @@ class setting_activity : Fragment() {
             file.name,
             file.asRequestBody("image/*".toMediaTypeOrNull())
         )
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

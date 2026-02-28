@@ -143,7 +143,6 @@
                 app:layout_constraintTop_toTopOf="@id/tvRequestsLabel"
                 app:layout_constraintBottom_toBottomOf="@id/tvRequestsLabel"/>
 
-            <!-- Friend Requests RecyclerView (horizontal or vertical, max ~2 visible) -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerFriendRequests"
                 android:layout_width="0dp"

@@ -101,7 +101,7 @@ class SignUp : AppCompatActivity() {
                 "(?=.*[0-9])" +         // at least one digit
                 "(?=.*[a-z])" +         // at least one lowercase letter
                 "(?=.*[A-Z])" +         // at least one uppercase letter
-                "(?=.*[@#\$%^&!*+=])" +   // at least one special character
+                "(?=.*[@#\$%_-^&!*+=])" +   // at least one special character
                 "(?=\\S+$)" +           // no white spaces
                 ".{8,}" +               // at least 8 characters
                 "$").toRegex()

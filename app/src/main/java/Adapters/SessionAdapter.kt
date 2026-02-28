@@ -31,8 +31,13 @@ class SessionAdapter(
             binding.tvSessionDescription.text = session.description
 
             //  Duration
+            val totalSeconds = session.durationMinutes
+
+            val minutes = totalSeconds / 60
+            val seconds = totalSeconds % 60
+
             binding.tvSessionDuration.text =
-                "${session.durationMinutes} min"
+                "${minutes}m ${seconds}s"
 
             //  Warning Text Row
             binding.tvSessionPages.text =

@@ -1,5 +1,6 @@
 package UI
 
+import Adapters.RecentSearchAdapter
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import DataClass.NotificationRequest
 import FCM.NotificationRetrofitClient
 import Adapters.SearchUserAdapter
+import DataClass.RecentSearch
 import DataClass.UserModel
 import com.example.taskvault.databinding.SearchActivityBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -26,6 +28,8 @@ class search_activity : Fragment() {
     private val currentUid = FirebaseAuth.getInstance().currentUser!!.uid
     private val userList = ArrayList<UserModel>()
     private lateinit var adapter: SearchUserAdapter
+    private lateinit var recentAdapter: RecentSearchAdapter
+    private val recentList = mutableListOf<RecentSearch>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,16 +47,32 @@ class search_activity : Fragment() {
     // ==========================
     // Recycler Setup
     // ==========================
-
     private fun setupRecycler() {
-        adapter = SearchUserAdapter(userList,currentUid){
-            targetuid-> sendFriendRequestNotification(targetuid)
+
+        adapter = SearchUserAdapter(userList, currentUid) { targetuid ->
+            sendFriendRequestNotification(targetuid)
         }
+
+        recentAdapter = RecentSearchAdapter(
+            onItemClick = { item ->
+                binding.etSearch.setText(item.username)
+                binding.etSearch.setSelection(item.username.length)
+                searchUsers(item.username)
+            },
+            onDeleteClick = { item ->
+                deleteRecentSearch(item.username)
+            }
+        )
+
         binding.recyclerSearchResults.layoutManager =
             LinearLayoutManager(requireContext())
-        binding.recyclerSearchResults.adapter = adapter
-    }
 
+        // Default → show recent
+        binding.recyclerSearchResults.adapter = recentAdapter
+
+        loadRecentSearches()
+        showRecentState()
+    }
     private fun sendFriendRequestNotification(targetUid: String) {
 
         val currentUid = FirebaseAuth.getInstance().currentUser?.uid ?: return
@@ -92,11 +112,9 @@ class search_activity : Fragment() {
                     }
             }
     }
-
     // ==========================
     // Listeners
     // ==========================
-
     private fun setupListeners() {
 
         // Back
@@ -107,6 +125,16 @@ class search_activity : Fragment() {
         // Clear button
         binding.btnClear.setOnClickListener {
             binding.etSearch.text.clear()
+        }
+        binding.btnClearAll.setOnClickListener {
+
+            requireContext()
+                .getSharedPreferences("recent_searches", 0)
+                .edit()
+                .clear()
+                .apply()
+
+            loadRecentSearches()
         }
 
         // Search typing
@@ -131,7 +159,6 @@ class search_activity : Fragment() {
             }
         })
     }
-
     // ==========================
     // Firestore Search
     // ==========================
@@ -182,38 +209,83 @@ class search_activity : Fragment() {
                             processed++
 
                             if (processed == total) {
+
                                 showResults()
                                 adapter.notifyDataSetChanged()
+
+                                if (query.isNotEmpty()) {
+                                    saveRecentSearch(query)
+                                    loadRecentSearches()
+                                }
                             }
                         }
                 }
             }
     }
-
-
-
-
-
-
-
     // ==========================
     // UI STATES
     // ==========================
-
     private fun showRecentState() {
+
         binding.recentSearchesSection.visibility = View.VISIBLE
         binding.searchResultsSection.visibility = View.GONE
-        binding.recyclerSearchResults.visibility = View.GONE
+        binding.recyclerSearchResults.visibility = View.VISIBLE
         binding.noResultsState.visibility = View.GONE
-    }
 
+        binding.recyclerSearchResults.adapter = recentAdapter
+        loadRecentSearches()
+    }
+    private fun saveRecentSearch(username: String) {
+
+        val prefs = requireContext()
+            .getSharedPreferences("recent_searches", 0)
+
+        val set = prefs.getStringSet("search_list", mutableSetOf())
+            ?.toMutableSet() ?: mutableSetOf()
+
+        set.remove(username)
+        set.add(username)
+
+        if (set.size > 10) {
+            set.remove(set.first())
+        }
+
+        prefs.edit().putStringSet("search_list", set).apply()
+    }
+    private fun loadRecentSearches() {
+
+        val prefs = requireContext()
+            .getSharedPreferences("recent_searches", 0)
+
+        val set = prefs.getStringSet("search_list", emptySet())
+
+        val list = set?.map { RecentSearch(it) }
+            ?.reversed() ?: emptyList()
+
+        recentAdapter.submitList(list)
+    }
+    private fun deleteRecentSearch(username: String) {
+
+        val prefs = requireContext()
+            .getSharedPreferences("recent_searches", 0)
+
+        val set = prefs.getStringSet("search_list", mutableSetOf())
+            ?.toMutableSet() ?: mutableSetOf()
+
+        set.remove(username)
+
+        prefs.edit().putStringSet("search_list", set).apply()
+
+        loadRecentSearches()
+    }
     private fun showResults() {
+
         binding.recentSearchesSection.visibility = View.GONE
         binding.searchResultsSection.visibility = View.VISIBLE
         binding.recyclerSearchResults.visibility = View.VISIBLE
         binding.noResultsState.visibility = View.GONE
+        binding.recyclerSearchResults.adapter = adapter
     }
-
     private fun showNoResults() {
         binding.recentSearchesSection.visibility = View.GONE
         binding.searchResultsSection.visibility = View.GONE

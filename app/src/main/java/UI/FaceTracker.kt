@@ -4,6 +4,8 @@ package UI
 import android.graphics.Rect
 import android.util.Log
 import com.google.mlkit.vision.face.Face
+import com.google.mlkit.vision.face.FaceContour
+import com.google.mlkit.vision.face.FaceLandmark
 import kotlin.math.abs
 
 class FaceTracker {
@@ -19,6 +21,7 @@ class FaceTracker {
     private var stableFaceCount = 0
     private var lastFaceBounds: Rect? = null
     private var isTrackingActive = false
+    private var lastEyeClosedState = false
 
     data class TrackingResult(
         val isEyeClosed: Boolean,
@@ -74,22 +77,63 @@ class FaceTracker {
     }
 
     private fun checkEyesClosed(face: Face): Boolean {
-        val leftEyeProb = face.leftEyeOpenProbability ?: 1f
-        val rightEyeProb = face.rightEyeOpenProbability ?: 1f
+        val left = face.leftEyeOpenProbability ?: 1f
+        val right = face.rightEyeOpenProbability ?: 1f
 
-        // Both eyes must be closed
-        return leftEyeProb < 0.3f && rightEyeProb < 0.3f
+        val avg = (left + right) / 2f
+
+        // Hysteresis thresholds
+        val CLOSE_THRESHOLD = 0.45f
+        val OPEN_THRESHOLD = 0.55f
+
+        lastEyeClosedState = when {
+            avg < CLOSE_THRESHOLD -> true
+            avg > OPEN_THRESHOLD -> false
+            else -> lastEyeClosedState
+        }
+
+        return lastEyeClosedState
     }
 
     private fun checkYawning(face: Face): Boolean {
-        val smileProb = face.smilingProbability ?: 0f
+
         val leftEyeProb = face.leftEyeOpenProbability ?: 1f
         val rightEyeProb = face.rightEyeOpenProbability ?: 1f
 
-        // Yawning detection: mouth open (low smile prob) but eyes not fully closed
-        return smileProb > 0.1f &&
-                leftEyeProb > 0.2f &&
-                rightEyeProb > 0.2f
+        val upperLipBottom = face.getContour(FaceContour.UPPER_LIP_BOTTOM)
+        val lowerLipTop = face.getContour(FaceContour.LOWER_LIP_TOP)
+
+        if (upperLipBottom != null && lowerLipTop != null &&
+            upperLipBottom.points.isNotEmpty() &&
+            lowerLipTop.points.isNotEmpty()
+        ) {
+
+            val upperLipY = upperLipBottom.points.map { it.y }.average().toFloat()
+            val lowerLipY = lowerLipTop.points.map { it.y }.average().toFloat()
+            val mouthOpenDistance = abs(lowerLipY - upperLipY)
+
+            val leftMouth = face.getLandmark(FaceLandmark.MOUTH_LEFT)
+            val rightMouth = face.getLandmark(FaceLandmark.MOUTH_RIGHT)
+
+            if (leftMouth != null && rightMouth != null) {
+
+                val mouthWidth = abs(rightMouth.position.x - leftMouth.position.x)
+
+                if (mouthWidth > 0) {
+
+                    val mouthAspectRatio = mouthOpenDistance / mouthWidth
+
+                    // 🔥 tuned thresholds
+                    val strongYawn = mouthAspectRatio > 0.38f
+                    val softYawn = mouthAspectRatio > 0.28f &&
+                            (leftEyeProb < 0.6f || rightEyeProb < 0.6f)
+
+                    return strongYawn || softYawn
+                }
+            }
+        }
+
+        return false
     }
 
     private fun isFaceStable(newBounds: Rect): Boolean {

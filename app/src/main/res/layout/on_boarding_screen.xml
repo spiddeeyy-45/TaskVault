@@ -159,8 +159,6 @@
                                 android:textStyle="bold"
                                 android:fontFamily="sans-serif-medium"
                                 android:letterSpacing="0.04"/>
-
-                            <!-- Next arrow icon (visible on non-last pages) -->
                             <ImageView
                                 android:id="@+id/nexticon"
                                 android:layout_width="20dp"
