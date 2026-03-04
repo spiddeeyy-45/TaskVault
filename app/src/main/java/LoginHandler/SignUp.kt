@@ -64,7 +64,7 @@ class SignUp : AppCompatActivity() {
                                     val intent = Intent(this, Login::class.java)
                                     startActivity(intent)
 
-                                    Toast.makeText(this, "Please Login with the ID You created", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this, "You are Welcome to TaskVault", Toast.LENGTH_SHORT).show()
                                 }
                                 .addOnFailureListener { e ->
                                     Toast.makeText(this, "Error saving user data: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -101,7 +101,7 @@ class SignUp : AppCompatActivity() {
                 "(?=.*[0-9])" +         // at least one digit
                 "(?=.*[a-z])" +         // at least one lowercase letter
                 "(?=.*[A-Z])" +         // at least one uppercase letter
-                "(?=.*[@#\$%_-^&!*+=])" +   // at least one special character
+                "(?=.*[@#\$%^&!*+=_-])" +   // at least one special character
                 "(?=\\S+$)" +           // no white spaces
                 ".{8,}" +               // at least 8 characters
                 "$").toRegex()
