@@ -180,6 +180,12 @@ class home_activity : Fragment() {
             .document(uid)
             .collection("PDFs")
             .add(pdfData)
+            .addOnSuccessListener { documentReference ->
+                Toast.makeText(requireContext(), "${pdfName} uploaded successfully", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Failed to save PDF: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
     private fun setupSearch() {
         binding.searchBarContainer.setOnClickListener{

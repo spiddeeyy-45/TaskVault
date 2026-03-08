@@ -249,7 +249,7 @@ class study_activity : Fragment() {
 
         faceTracker.reset()
 
-        // 🔥 SWITCH TO SESSION LAYOUT
+        //  SWITCH TO SESSION LAYOUT
         binding.layoutIdle.visibility = View.GONE
         binding.layoutSession.visibility = View.VISIBLE
 
@@ -285,6 +285,7 @@ class study_activity : Fragment() {
         }
     }
     private fun stopSession() {
+        currentState=TrackingState.IDLE
         cameraProvider?.unbindAll()
         faceDetector?.close()
         ringtone?.stop()
@@ -969,7 +970,6 @@ class study_activity : Fragment() {
             }
         }
     }
-
     private fun enableNotifications() {
         val nm = requireContext().getSystemService(NotificationManager::class.java)
 
@@ -979,7 +979,6 @@ class study_activity : Fragment() {
             }
         }
     }
-
     private fun askForDndPermission() {
         AlertDialog.Builder(requireContext())
             .setTitle("Do Not Disturb Access Required")

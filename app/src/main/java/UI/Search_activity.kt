@@ -133,11 +133,27 @@ class search_activity : Fragment() {
                 .edit()
                 .clear()
                 .apply()
-
             loadRecentSearches()
         }
 
         // Search typing
+        binding.etSearch.setOnEditorActionListener { v, actionId, event ->
+
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
+
+                val query = binding.etSearch.text.toString().trim()
+
+                if (query.isNotEmpty()) {
+                    searchUsers(query)
+                    saveRecentSearch(query)
+                    loadRecentSearches()
+                }
+
+                true
+            } else {
+                false
+            }
+        }
         binding.etSearch.addTextChangedListener(object : TextWatcher {
 
             override fun afterTextChanged(s: Editable?) {}
@@ -209,14 +225,9 @@ class search_activity : Fragment() {
                             processed++
 
                             if (processed == total) {
-
                                 showResults()
                                 adapter.notifyDataSetChanged()
 
-                                if (query.isNotEmpty()) {
-                                    saveRecentSearch(query)
-                                    loadRecentSearches()
-                                }
                             }
                         }
                 }

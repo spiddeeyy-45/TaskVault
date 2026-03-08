@@ -103,7 +103,7 @@ class SignUp : AppCompatActivity() {
                 "(?=.*[A-Z])" +         // at least one uppercase letter
                 "(?=.*[@#\$%^&!*+=_-])" +   // at least one special character
                 "(?=\\S+$)" +           // no white spaces
-                ".{8,}" +               // at least 8 characters
+                ".{8,20}" +               // at least 8 characters
                 "$").toRegex()
         return when {
             password.isEmpty() -> {
@@ -112,7 +112,7 @@ class SignUp : AppCompatActivity() {
             }
 
             !password.matches(passwordRegex) -> {
-                Binding.passwordInput.error = "Password must include uppercase, lowercase, digit, special char, and no spaces"
+                Binding.passwordInput.error = "Password must include uppercase, lowercase, digit, special char, no spaces, and only20letters"
                 false
             }
 
@@ -177,7 +177,7 @@ class SignUp : AppCompatActivity() {
                 false
             }
             !name.matches(nameRegex) || name.length < 4 || name.length > 20 -> {
-                Binding.fullnameInput.error = "Enter 1–3 words, 4–20 characters, letters only"
+                Binding.fullnameInput.error = "Enter 4–20 characters and letters only"
                 false
             }
             else -> {
