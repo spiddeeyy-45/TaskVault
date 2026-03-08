@@ -21,10 +21,10 @@
                 android:id="@+id/logo_vault"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:layout_marginRight="10dp"
-                android:src="@drawable/logo"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/taskvault_logo"
                 android:contentDescription="Vault Logo"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="15dp" />
 
             <!-- Title -->
             <TextView
@@ -36,7 +36,7 @@
                 android:textStyle="bold"
                 android:textColor="#F5F5DC"
                 android:fontFamily="sans-serif-medium"
-                android:layout_marginTop="-16dp" />
+                />
 
             <TextView
                 android:id="@+id/vault_subtitle"
